@@ -1,1019 +1,356 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="75 Days" />
-<meta name="theme-color" content="#0a0a0f" />
-<title>75 Days — NIOS PCM Warrior</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=JetBrains+Mono:wght@400;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+import { useState, useEffect, useCallback } from “react”;
 
-<style>
-  :root {
-    --bg: #0a0a0f;
-    --bg2: #111118;
-    --bg3: #16161f;
-    --border: #2a2a3a;
-    --text: #f0f0f8;
-    --muted: #666680;
-    --dim: #444460;
-    --orange: #ff6b35;
-    --pink: #ef476f;
-    --yellow: #ffd166;
-    --blue: #118ab2;
-    --green: #06d6a0;
-    --purple: #c77dff;
-    --cyan: #4cc9f0;
-    --magenta: #f72585;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-    overflow-x: hidden;
-  }
-
-  /* NOISE OVERLAY */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.4;
-  }
-
-  /* HEADER */
-  #header {
-    background: linear-gradient(135deg, #0a0a0f 0%, #130a1a 50%, #0a0a0f 100%);
-    border-bottom: 1px solid var(--border);
-    padding: 52px 16px 16px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 14px;
-  }
-
-  .brand-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 44px;
-    font-weight: 900;
-    letter-spacing: 2px;
-    background: linear-gradient(135deg, var(--orange), var(--yellow));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1;
-  }
-
-  .brand-sub {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--muted);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-top: 4px;
-  }
-
-  .progress-wrap { text-align: center; position: relative; }
-  .progress-num {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -60%);
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    font-weight: 900;
-    color: var(--yellow);
-  }
-  .progress-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8px;
-    color: var(--muted);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-top: 2px;
-  }
-
-  .habit-pills {
-    display: flex;
-    gap: 7px;
-    flex-wrap: wrap;
-  }
-
-  .habit-pill {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 5px 10px;
-    font-size: 11px;
-    font-family: 'DM Sans', sans-serif;
-  }
-
-  .pill-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  /* QUOTE BANNER */
-  #quote-banner {
-    margin: 12px 16px 0;
-    background: linear-gradient(135deg, rgba(255,107,53,0.08), rgba(255,209,102,0.06));
-    border: 1px solid rgba(255,107,53,0.25);
-    border-radius: 14px;
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    animation: fadeSlide 0.5s ease;
-  }
-
-  @keyframes fadeSlide {
-    from { opacity: 0; transform: translateY(-6px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .quote-icon { font-size: 28px; flex-shrink: 0; }
-  .quote-text {
-    font-family: 'Playfair Display', serif;
-    font-size: 13px;
-    color: var(--yellow);
-    font-style: italic;
-    line-height: 1.4;
-  }
-  .quote-author {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--muted);
-    margin-top: 4px;
-    letter-spacing: 1px;
-  }
-
-  /* TABS */
-  #tabs {
-    display: flex;
-    gap: 4px;
-    padding: 12px 16px 0;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg);
-    position: sticky;
-    top: 0;
-    z-index: 99;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .tab-btn {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    padding: 9px 14px;
-    border-radius: 8px 8px 0 0;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.15s;
-    background: transparent;
-    border: 1px solid transparent;
-    color: var(--muted);
-  }
-
-  .tab-btn.active {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-bottom: 1px solid var(--bg2);
-    color: var(--text);
-    margin-bottom: -1px;
-  }
-
-  /* CONTENT PANELS */
-  .panel { display: none; padding: 16px; animation: fadeSlide 0.2s ease; }
-  .panel.active { display: block; }
-
-  /* ===== TRACKER ===== */
-  .tracker-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-
-  table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    min-width: 480px;
-  }
-
-  thead th {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--muted);
-    background: var(--bg2);
-    border-bottom: 1px solid var(--border);
-    padding: 10px 6px;
-    text-align: center;
-    letter-spacing: 1px;
-  }
-
-  thead th:first-child { text-align: left; padding-left: 12px; }
-
-  .week-label td {
-    padding: 10px 0 3px 12px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--orange);
-    opacity: 0.7;
-  }
-
-  .day-row td {
-    border-bottom: 1px solid rgba(42,42,58,0.4);
-    padding: 7px 4px;
-    text-align: center;
-  }
-
-  .day-row td:first-child { padding-left: 12px; text-align: left; }
-
-  .day-num {
-    font-family: 'Playfair Display', serif;
-    font-size: 17px;
-    font-weight: 700;
-    line-height: 1;
-  }
-
-  .day-date {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--dim);
-    margin-top: 1px;
-  }
-
-  .habit-box {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    margin: auto;
-    cursor: pointer;
-    border: 2px solid var(--border);
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    transition: all 0.15s;
-    user-select: none;
-  }
-
-  .habit-box.checked {
-    box-shadow: 0 0 10px currentColor;
-  }
-
-  .fire-cell { font-size: 18px; opacity: 0.15; }
-  .fire-cell.lit { opacity: 1; }
-
-  /* ===== STUDY ===== */
-  .study-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 14px;
-  }
-
-  .study-card {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 16px;
-  }
-
-  .card-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-
-  .card-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-  }
-
-  .card-title {
-    font-family: 'Playfair Display', serif;
-    font-weight: 700;
-    font-size: 15px;
-    line-height: 1.2;
-  }
-
-  .card-sub {
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 2px;
-  }
-
-  .task-list { display: flex; flex-direction: column; gap: 7px; }
-
-  .task-item {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    padding: 9px 11px;
-    background: var(--bg2);
-    border-radius: 9px;
-    cursor: pointer;
-    border: 1px solid transparent;
-    transition: all 0.15s;
-    user-select: none;
-  }
-
-  .task-item:active { transform: scale(0.98); }
-
-  .task-check {
-    width: 20px;
-    height: 20px;
-    border-radius: 5px;
-    flex-shrink: 0;
-    border: 2px solid var(--border);
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 700;
-    color: #000;
-    transition: all 0.15s;
-  }
-
-  .task-check.done {
-    background: var(--green);
-    border-color: var(--green);
-  }
-
-  .task-text {
-    font-size: 12px;
-    font-weight: 500;
-    flex: 1;
-    transition: all 0.15s;
-  }
-
-  .task-item.done-item { opacity: 0.55; }
-  .task-item.done-item .task-text { text-decoration: line-through; color: var(--muted); }
-
-  .task-time {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: var(--dim);
-    white-space: nowrap;
-  }
-
-  /* ===== STATS ===== */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 24px;
-  }
-
-  .stat-card {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 16px 10px;
-    text-align: center;
-  }
-
-  .stat-num {
-    font-family: 'Playfair Display', serif;
-    font-size: 34px;
-    font-weight: 900;
-    background: linear-gradient(135deg, var(--orange), var(--yellow));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1;
-  }
-
-  .stat-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--muted);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-top: 5px;
-  }
-
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    font-weight: 700;
-    font-size: 16px;
-    color: var(--muted);
-    letter-spacing: 2px;
-    margin-bottom: 12px;
-    text-transform: uppercase;
-  }
-
-  .heatmap {
-    display: grid;
-    grid-template-columns: repeat(15, 1fr);
-    gap: 4px;
-    margin-bottom: 24px;
-  }
-
-  .heat-cell {
-    aspect-ratio: 1;
-    border-radius: 4px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 7px;
-    color: var(--muted);
-  }
-
-  /* HABIT PROGRESS BARS */
-  .habit-bars { display: flex; flex-direction: column; gap: 10px; }
-  .habit-bar-row { display: flex; flex-direction: column; gap: 4px; }
-  .habit-bar-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    color: var(--muted);
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .habit-bar-track {
-    height: 6px;
-    background: var(--bg3);
-    border-radius: 99px;
-    overflow: hidden;
-  }
-  .habit-bar-fill {
-    height: 100%;
-    border-radius: 99px;
-    transition: width 0.4s ease;
-  }
-
-  /* RESET BUTTON */
-  .danger-btn {
-    margin-top: 28px;
-    width: 100%;
-    padding: 13px;
-    border-radius: 12px;
-    border: 1px solid rgba(239,71,111,0.3);
-    background: rgba(239,71,111,0.08);
-    color: var(--pink);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .danger-btn:active { background: rgba(239,71,111,0.2); }
-
-  /* TOAST */
-  #toast {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: var(--green);
-    color: #000;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 10px 20px;
-    border-radius: 99px;
-    z-index: 999;
-    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
-    white-space: nowrap;
-  }
-  #toast.show { transform: translateX(-50%) translateY(0); }
-
-  /* PWA INSTALL BANNER */
-  #install-banner {
-    display: none;
-    margin: 10px 16px 0;
-    background: rgba(17,138,178,0.12);
-    border: 1px solid rgba(17,138,178,0.3);
-    border-radius: 12px;
-    padding: 12px 14px;
-    align-items: center;
-    gap: 10px;
-    font-size: 12px;
-  }
-
-  #install-banner.visible { display: flex; }
-
-  .install-btn {
-    margin-left: auto;
-    padding: 7px 14px;
-    border-radius: 8px;
-    background: var(--blue);
-    color: #fff;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    border: none;
-    cursor: pointer;
-    white-space: nowrap;
-    letter-spacing: 1px;
-  }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
-</style>
-</head>
-<body>
-
-<!-- HEADER -->
-<div id="header">
-  <div class="header-top">
-    <div>
-      <div class="brand-title">75 DAYS</div>
-      <div class="brand-sub">NIOS Class 12 PCM — No Excuses</div>
-    </div>
-    <div class="progress-wrap">
-      <svg id="prog-svg" width="72" height="72" viewBox="0 0 72 72" style="transform:rotate(-90deg)">
-        <circle cx="36" cy="36" r="28" fill="none" stroke="#2a2a3a" stroke-width="5"/>
-        <circle id="prog-arc" cx="36" cy="36" r="28" fill="none"
-          stroke="url(#g1)" stroke-width="5" stroke-linecap="round"
-          stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
-        <defs>
-          <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#ff6b35"/>
-            <stop offset="100%" stop-color="#ffd166"/>
-          </linearGradient>
-        </defs>
-      </svg>
-      <div class="progress-num" id="prog-num">0</div>
-      <div class="progress-label">DONE</div>
-    </div>
-  </div>
-  <div class="habit-pills">
-    <div class="habit-pill"><div class="pill-dot" style="background:#ff6b35"></div>🚫🍭 No Sugar</div>
-    <div class="habit-pill"><div class="pill-dot" style="background:#ef476f"></div>🚫🍟 No Junk</div>
-    <div class="habit-pill"><div class="pill-dot" style="background:#ffd166"></div>👟 8-10K Steps</div>
-    <div class="habit-pill"><div class="pill-dot" style="background:#118ab2"></div>🌅 Early Rise</div>
-  </div>
-</div>
-
-<!-- INSTALL BANNER -->
-<div id="install-banner">
-  <span>📲</span>
-  <span style="color:var(--muted)">Home screen pe add karo!</span>
-  <button class="install-btn" id="install-btn">Install</button>
-</div>
-
-<!-- QUOTE BANNER -->
-<div id="quote-banner" style="display:none"></div>
-
-<!-- TABS -->
-<div id="tabs">
-  <button class="tab-btn active" data-tab="tracker">📋 Tracker</button>
-  <button class="tab-btn" data-tab="study">📚 Study</button>
-  <button class="tab-btn" data-tab="stats">📊 Stats</button>
-</div>
-
-<!-- ===== TRACKER PANEL ===== -->
-<div class="panel active" id="panel-tracker">
-  <div class="tracker-wrap">
-    <table id="tracker-table">
-      <thead>
-        <tr>
-          <th style="text-align:left;padding-left:12px">DAY</th>
-          <th>🚫🍭<br><span style="font-size:8px">No Sugar</span></th>
-          <th>🚫🍟<br><span style="font-size:8px">No Junk</span></th>
-          <th>👟<br><span style="font-size:8px">Steps</span></th>
-          <th>🌅<br><span style="font-size:8px">Early Rise</span></th>
-          <th>✅</th>
-        </tr>
-      </thead>
-      <tbody id="tracker-body"></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- ===== STUDY PANEL ===== -->
-<div class="panel" id="panel-study">
-  <div id="study-banner" style="background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.3);border-radius:12px;padding:14px 16px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
-    <span style="font-size:26px">🧠</span>
-    <div>
-      <div style="font-family:'Playfair Display',serif;font-weight:800;font-size:16px;color:var(--yellow);letter-spacing:1px">NIOS BOARD — PCM WARRIOR!</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:2px">Tick karo, aage badho — ek din ek kaam</div>
-    </div>
-  </div>
-  <div class="study-grid" id="study-grid"></div>
-</div>
-
-<!-- ===== STATS PANEL ===== -->
-<div class="panel" id="panel-stats">
-  <div class="stats-grid" id="stats-grid"></div>
-  <div class="section-title">75-Day Heatmap</div>
-  <div class="heatmap" id="heatmap"></div>
-  <div class="section-title">Habit Breakdown</div>
-  <div class="habit-bars" id="habit-bars"></div>
-  <button class="danger-btn" id="reset-btn">⚠ Reset All Data</button>
-</div>
-
-<!-- TOAST -->
-<div id="toast">✓ Saved!</div>
-
-<script>
-// =====================
-// DATA
-// =====================
 const HABITS = [
-  { key: "sugar", label: "No Sugar", emoji: "🚫🍭", color: "#ff6b35" },
-  { key: "junk",  label: "No Junk",  emoji: "🚫🍟", color: "#ef476f" },
-  { key: "steps", label: "8-10K Steps", emoji: "👟", color: "#ffd166" },
-  { key: "rise",  label: "Early Rise", emoji: "🌅", color: "#118ab2" },
+{ key: “sugar”, label: “No Sugar”, emoji: “🚫🍭”, color: “#ff6b35” },
+{ key: “junk”,  label: “No Junk”,  emoji: “🚫🍟”, color: “#ef476f” },
+{ key: “steps”, label: “8-10K Steps”, emoji: “👟”,  color: “#ffd166” },
+{ key: “rise”,  label: “Early Rise”, emoji: “🌅”,  color: “#118ab2” },
 ];
 
-const STUDY = [
-  { icon: "📐", color: "#4cc9f0", title: "Mathematics (311)", sub: "NIOS Class 12",
-    tasks: [
-      { t: "Relations & Functions — theory + examples", time: "40 min" },
-      { t: "Calculus — Differentiation / Integration",   time: "45 min" },
-      { t: "Matrices & Determinants — numericals",       time: "35 min" },
-      { t: "NIOS TMA / Prev year MCQs (15 qs)",          time: "30 min" },
-    ]},
-  { icon: "⚡", color: "#06d6a0", title: "Physics (312)", sub: "NIOS Class 12",
-    tasks: [
-      { t: "Electrostatics / Current Electricity — read", time: "40 min" },
-      { t: "Formulas list banao & yaad karo",             time: "20 min" },
-      { t: "Numerical practice (10 qs)",                  time: "35 min" },
-      { t: "Ray Optics / Wave Optics — diagrams",         time: "20 min" },
-    ]},
-  { icon: "🧪", color: "#c77dff", title: "Chemistry (313)", sub: "NIOS Class 12",
-    tasks: [
-      { t: "Solid State / Solutions / Electrochemistry",  time: "35 min" },
-      { t: "Organic Chemistry — reactions & mechanisms",  time: "40 min" },
-      { t: "Chemical equations balance practice",         time: "20 min" },
-      { t: "NIOS sample paper MCQs (10 qs)",              time: "20 min" },
-    ]},
-  { icon: "✍️", color: "#ff6b35", title: "English (302)", sub: "NIOS Class 12",
-    tasks: [
-      { t: "Reading Comprehension passage (1)",           time: "20 min" },
-      { t: "Letter / Essay / Notice writing practice",    time: "25 min" },
-      { t: "Grammar — tenses, voice, narration",          time: "20 min" },
-      { t: "10 new vocabulary / idioms",                  time: "15 min" },
-    ]},
-  { icon: "📋", color: "#ffd166", title: "NIOS TMA Work", sub: "Important — submit karna hai!",
-    tasks: [
-      { t: "TMA question solve karo (1-2 qs)", time: "45 min" },
-      { t: "NIOS SLM — 1 lesson read karo",    time: "30 min" },
-      { t: "On Demand Exam practice paper",    time: "40 min" },
-    ]},
-  { icon: "🔁", color: "#f72585", title: "Daily Revision", sub: "Sab subjects thoda thoda",
-    tasks: [
-      { t: "Morning — PCM formulas & key points revise", time: "20 min" },
-      { t: "Flashcards — Chemistry reactions / Maths",   time: "15 min" },
-      { t: "Weekly mock test (1 full subject paper)",    time: "90 min" },
-    ]},
+const STUDY_DATA = [
+{
+icon: “📐”, color: “#4cc9f0”, title: “Mathematics (311)”, sub: “NIOS Class 12”,
+tasks: [
+{ t: “Relations & Functions — theory + examples”, time: “40 min” },
+{ t: “Calculus — Differentiation / Integration”, time: “45 min” },
+{ t: “Matrices & Determinants — numericals”, time: “35 min” },
+{ t: “NIOS TMA / Prev year MCQs (15 qs)”, time: “30 min” },
+],
+},
+{
+icon: “⚡”, color: “#06d6a0”, title: “Physics (312)”, sub: “NIOS Class 12”,
+tasks: [
+{ t: “Electrostatics / Current Electricity — read”, time: “40 min” },
+{ t: “Formulas list banao & yaad karo”, time: “20 min” },
+{ t: “Numerical practice (10 qs)”, time: “35 min” },
+{ t: “Ray Optics / Wave Optics — diagrams”, time: “20 min” },
+],
+},
+{
+icon: “🧪”, color: “#c77dff”, title: “Chemistry (313)”, sub: “NIOS Class 12”,
+tasks: [
+{ t: “Solid State / Solutions / Electrochemistry”, time: “35 min” },
+{ t: “Organic Chemistry — reactions & mechanisms”, time: “40 min” },
+{ t: “Chemical equations balance practice”, time: “20 min” },
+{ t: “NIOS sample paper MCQs (10 qs)”, time: “20 min” },
+],
+},
+{
+icon: “✍️”, color: “#ff6b35”, title: “English (302)”, sub: “NIOS Class 12”,
+tasks: [
+{ t: “Reading Comprehension passage (1)”, time: “20 min” },
+{ t: “Letter / Essay / Notice writing practice”, time: “25 min” },
+{ t: “Grammar — tenses, voice, narration”, time: “20 min” },
+{ t: “10 new vocabulary / idioms”, time: “15 min” },
+],
+},
+{
+icon: “📋”, color: “#ffd166”, title: “NIOS TMA Work”, sub: “Submit karna hai!”,
+tasks: [
+{ t: “TMA question solve karo (1-2 qs)”, time: “45 min” },
+{ t: “NIOS SLM — 1 lesson read karo”, time: “30 min” },
+{ t: “On Demand Exam practice paper”, time: “40 min” },
+],
+},
+{
+icon: “🔁”, color: “#f72585”, title: “Daily Revision”, sub: “Sab subjects thoda thoda”,
+tasks: [
+{ t: “Morning — PCM formulas & key points revise”, time: “20 min” },
+{ t: “Flashcards — Chemistry reactions / Maths”, time: “15 min” },
+{ t: “Weekly mock test (1 full subject paper)”, time: “90 min” },
+],
+},
 ];
 
-const QUOTES = [
-  { text: "Mehnat ka koi shortcut nahi hota.", author: "— PCM Warrior", icon: "🔥" },
-  { text: "Ek din ek step — 75 din mein manzil.", author: "— 75 Hard", icon: "🌅" },
-  { text: "Board exam mein wo aata hai jo tum practice karte ho.", author: "— Your Future Self", icon: "📐" },
-  { text: "Thaka hua hoon, lekin ruk nahi sakta.", author: "— Kobe Bryant", icon: "⚡" },
-  { text: "Discipline is choosing between what you want now and what you want most.", author: "— Abraham Lincoln", icon: "🧪" },
-  { text: "Success is the sum of small efforts repeated day in and day out.", author: "— Robert Collier", icon: "✍️" },
-  { text: "Aaj ki mehnat kal ka result hai.", author: "— PCM Warrior", icon: "🏆" },
-  { text: "Na sugar, na junk — sirf results.", author: "— 75 Days", icon: "💪" },
-];
-
-const SK = "75days_v1";
-
-function load() {
-  try { return JSON.parse(localStorage.getItem(SK) || "{}"); } catch { return {}; }
-}
-function save(d) {
-  try { localStorage.setItem(SK, JSON.stringify(d)); } catch {}
+function getDayDate(dayNum) {
+const d = new Date(2025, 2, 25);
+d.setDate(d.getDate() + dayNum - 1);
+return d.toLocaleDateString(“en-IN”, { day: “2-digit”, month: “short” });
 }
 
-let DATA = load();
+export default function App() {
+const [tab, setTab] = useState(“tracker”);
+const [data, setData] = useState({});
+const [saving, setSaving] = useState(false);
+const [loaded, setLoaded] = useState(false);
+
+// Load from storage on mount
+useEffect(() => {
+async function loadAll() {
+try {
+const result = await window.storage.get(“habits”);
+if (result && result.value) {
+setData(JSON.parse(result.value));
+}
+} catch (e) {
+// No data yet, start fresh
+}
+setLoaded(true);
+}
+loadAll();
+}, []);
+
+// Save to storage whenever data changes
+const persist = useCallback(async (newData) => {
+setSaving(true);
+try {
+await window.storage.set(“habits”, JSON.stringify(newData));
+} catch (e) {}
+setTimeout(() => setSaving(false), 600);
+}, []);
+
+function toggleHabit(day, habit) {
+setData(prev => {
+const k = `d${day}`;
+const updated = { …prev, [k]: { …(prev[k] || {}), [habit]: !(prev[k] || {})[habit] } };
+persist(updated);
+return updated;
+});
+}
+
+function toggleStudy(ci, ti) {
+setData(prev => {
+const k = `s${ci}_${ti}`;
+const updated = { …prev, [k]: !prev[k] };
+persist(updated);
+return updated;
+});
+}
 
 function getDoneCount(day) {
-  const row = DATA[`d${day}`] || {};
-  return HABITS.filter(h => row[h.key]).length;
+const row = data[`d${day}`] || {};
+return HABITS.filter(h => row[h.key]).length;
 }
+
 function isAllDone(day) { return getDoneCount(day) === 4; }
 
-function getPerfectDays() {
-  return Array.from({length:75},(_,i)=>i+1).filter(isAllDone).length;
+const perfectDays = Array.from({ length: 75 }, (_, i) => i + 1).filter(isAllDone).length;
+const pct = Math.round((perfectDays / 75) * 100);
+
+let streak = 0;
+for (let d = 75; d >= 1; d–) {
+if (isAllDone(d)) streak++; else break;
 }
 
-function getStreak() {
-  let s = 0;
-  for (let d = 75; d >= 1; d--) {
-    if (isAllDone(d)) s++; else break;
-  }
-  return s;
+if (!loaded) {
+return (
+<div style={{ background: “#0a0a0f”, minHeight: “100vh”, display: “flex”, alignItems: “center”, justifyContent: “center”, color: “#ffd166”, fontFamily: “serif”, fontSize: 24, fontWeight: 700 }}>
+Loading… 🔥
+</div>
+);
 }
 
-function getDayDate(n) {
-  const d = new Date(2025, 2, 25);
-  d.setDate(d.getDate() + n - 1);
-  return d.toLocaleDateString("en-IN", { day:"2-digit", month:"short" });
-}
+return (
+<div style={{ fontFamily: “sans-serif”, background: “#0a0a0f”, minHeight: “100vh”, color: “#f0f0f8” }}>
 
-// =====================
-// TRACKER
-// =====================
-function buildTracker() {
-  const tbody = document.getElementById("tracker-body");
-  tbody.innerHTML = "";
-
-  for (let day = 1; day <= 75; day++) {
-    if ((day - 1) % 7 === 0) {
-      const wr = document.createElement("tr");
-      wr.className = "week-label";
-      wr.innerHTML = `<td colspan="6">WEEK ${Math.ceil(day/7)}</td>`;
-      tbody.appendChild(wr);
-    }
-
-    const count = getDoneCount(day);
-    const all = count === 4;
-    const rowData = DATA[`d${day}`] || {};
-
-    const tr = document.createElement("tr");
-    tr.className = "day-row";
-    tr.style.background = all ? "rgba(6,214,160,0.04)" : "transparent";
-
-    // Day cell
-    const dayColor = all ? "var(--green)" : count > 0 ? "var(--text)" : "var(--muted)";
-    let html = `<td>
-      <div class="day-num" style="color:${dayColor}">D${String(day).padStart(2,"0")}</div>
-      <div class="day-date">${getDayDate(day)}</div>
-    </td>`;
-
-    // Habit cells
-    HABITS.forEach(h => {
-      const checked = rowData[h.key] || false;
-      const borderColor = checked ? h.color : "var(--border)";
-      const bg = checked ? h.color + "22" : "transparent";
-      const shadow = checked ? `0 0 10px ${h.color}66` : "none";
-      html += `<td>
-        <div class="habit-box ${checked ? "checked" : ""}"
-          style="border-color:${borderColor};background:${bg};box-shadow:${shadow};color:${h.color}"
-          data-day="${day}" data-habit="${h.key}">${checked ? "✓" : ""}</div>
-      </td>`;
-    });
-
-    // Fire
-    html += `<td class="fire-cell ${all ? "lit" : ""}">${all ? "🔥" : "○"}</td>`;
-
-    tr.innerHTML = html;
-    tbody.appendChild(tr);
-  }
-
-  // Events
-  tbody.querySelectorAll(".habit-box").forEach(el => {
-    el.addEventListener("click", () => {
-      const day = +el.dataset.day;
-      const habit = el.dataset.habit;
-      const k = `d${day}`;
-      DATA[k] = { ...(DATA[k] || {}), [habit]: !(DATA[k] || {})[habit] };
-      save(DATA);
-      updateAll();
-      showToast();
-    });
-  });
-}
-
-// =====================
-// STUDY
-// =====================
-function buildStudy() {
-  const grid = document.getElementById("study-grid");
-  grid.innerHTML = "";
-
-  STUDY.forEach((card, ci) => {
-    const div = document.createElement("div");
-    div.className = "study-card";
-
-    let tasks = card.tasks.map((task, ti) => {
-      const done = DATA[`s${ci}_${ti}`] || false;
-      return `<div class="task-item ${done ? "done-item" : ""}" data-ci="${ci}" data-ti="${ti}">
-        <div class="task-check ${done ? "done" : ""}">${done ? "✓" : ""}</div>
-        <span class="task-text">${task.t}</span>
-        <span class="task-time">${task.time}</span>
-      </div>`;
-    }).join("");
-
-    div.innerHTML = `
-      <div class="card-header">
-        <div class="card-icon" style="background:${card.color}22">${card.icon}</div>
-        <div>
-          <div class="card-title" style="color:${card.color}">${card.title}</div>
-          <div class="card-sub">${card.sub}</div>
+```
+  {/* HEADER */}
+  <div style={{ background: "linear-gradient(135deg,#0a0a0f,#1a0a1f,#0a0a0f)", borderBottom: "1px solid #2a2a3a", padding: "18px 16px 14px", position: "sticky", top: 0, zIndex: 100 }}>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+      <div>
+        <div style={{ fontSize: 36, fontWeight: 900, letterSpacing: 2, background: "linear-gradient(135deg,#ff6b35,#ffd166)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", lineHeight: 1 }}>
+          75 DAYS 🔥
+        </div>
+        <div style={{ fontSize: 10, color: "#666680", letterSpacing: 2, textTransform: "uppercase", marginTop: 3 }}>
+          NIOS Class 12 PCM • 25 Mar – 7 Jun
         </div>
       </div>
-      <div class="task-list">${tasks}</div>`;
-
-    grid.appendChild(div);
-  });
-
-  grid.querySelectorAll(".task-item").forEach(el => {
-    el.addEventListener("click", () => {
-      const ci = +el.dataset.ci, ti = +el.dataset.ti;
-      const k = `s${ci}_${ti}`;
-      DATA[k] = !DATA[k];
-      save(DATA);
-      buildStudy();
-      showToast();
-    });
-  });
-}
-
-// =====================
-// STATS
-// =====================
-function buildStats() {
-  const perfect = getPerfectDays();
-  const streak  = getStreak();
-  const pct     = Math.round((perfect / 75) * 100);
-  const totalChecks = Array.from({length:75},(_,i)=>getDoneCount(i+1)).reduce((a,b)=>a+b,0);
-
-  const sg = document.getElementById("stats-grid");
-  sg.innerHTML = [
-    { num: perfect,              label: "Perfect Days" },
-    { num: streak + " 🔥",      label: "Streak" },
-    { num: pct + "%",            label: "Complete" },
-    { num: 75 - perfect,         label: "Remaining" },
-    { num: totalChecks,          label: "Total Checks" },
-    { num: 75,                   label: "Total Days" },
-  ].map(s => `
-    <div class="stat-card">
-      <div class="stat-num">${s.num}</div>
-      <div class="stat-label">${s.label}</div>
-    </div>`).join("");
-
-  // Heatmap
-  const hm = document.getElementById("heatmap");
-  hm.innerHTML = "";
-  const heatColors = ["#16161f","rgba(6,214,160,0.15)","rgba(6,214,160,0.35)","rgba(6,214,160,0.6)","rgba(6,214,160,0.85)"];
-  for (let day = 1; day <= 75; day++) {
-    const score = getDoneCount(day);
-    const cell = document.createElement("div");
-    cell.className = "heat-cell";
-    cell.style.background = heatColors[score];
-    cell.style.borderColor = score > 0 ? "rgba(6,214,160,0.3)" : "var(--border)";
-    cell.style.color = score === 4 ? "#000" : "var(--muted)";
-    cell.textContent = day;
-    hm.appendChild(cell);
-  }
-
-  // Habit bars
-  const hb = document.getElementById("habit-bars");
-  hb.innerHTML = HABITS.map(h => {
-    const count = Array.from({length:75},(_,i)=>{
-      return (DATA[`d${i+1}`] || {})[h.key] ? 1 : 0;
-    }).reduce((a,b)=>a+b,0);
-    const pctH = Math.round((count/75)*100);
-    return `<div class="habit-bar-row">
-      <div class="habit-bar-label">
-        <span>${h.emoji} ${h.label}</span>
-        <span style="color:${h.color}">${count}/75</span>
+      <div style={{ textAlign: "center" }}>
+        <svg width="64" height="64" viewBox="0 0 64 64" style={{ transform: "rotate(-90deg)" }}>
+          <circle cx="32" cy="32" r="26" fill="none" stroke="#2a2a3a" strokeWidth="5" />
+          <circle cx="32" cy="32" r="26" fill="none" stroke="url(#g1)" strokeWidth="5"
+            strokeLinecap="round"
+            strokeDasharray={163.4}
+            strokeDashoffset={163.4 - (163.4 * pct / 100)} />
+          <defs>
+            <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#ff6b35" />
+              <stop offset="100%" stopColor="#ffd166" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div style={{ marginTop: -50, fontSize: 20, fontWeight: 900, color: "#ffd166", lineHeight: 1 }}>{perfectDays}</div>
+        <div style={{ fontSize: 8, color: "#666680", letterSpacing: 1, textTransform: "uppercase", marginTop: 28 }}>DONE</div>
       </div>
-      <div class="habit-bar-track">
-        <div class="habit-bar-fill" style="width:${pctH}%;background:${h.color}"></div>
+    </div>
+    <div style={{ display: "flex", gap: 7, flexWrap: "wrap" }}>
+      {HABITS.map(h => (
+        <div key={h.key} style={{ display: "flex", alignItems: "center", gap: 5, background: "#16161f", border: "1px solid #2a2a3a", borderRadius: 20, padding: "4px 10px", fontSize: 11 }}>
+          <div style={{ width: 6, height: 6, borderRadius: "50%", background: h.color }} />
+          {h.emoji} {h.label}
+        </div>
+      ))}
+      {saving && <div style={{ display: "flex", alignItems: "center", gap: 5, background: "rgba(6,214,160,0.1)", border: "1px solid rgba(6,214,160,0.3)", borderRadius: 20, padding: "4px 10px", fontSize: 11, color: "#06d6a0" }}>💾 Saving...</div>}
+    </div>
+  </div>
+
+  {/* TABS */}
+  <div style={{ display: "flex", gap: 4, padding: "10px 16px 0", borderBottom: "1px solid #2a2a3a", background: "#0a0a0f", position: "sticky", top: 132, zIndex: 99 }}>
+    {[["tracker","📋 Tracker"],["study","📚 Study"],["stats","📊 Stats"]].map(([id, label]) => (
+      <button key={id} onClick={() => setTab(id)} style={{
+        fontFamily: "monospace", fontSize: 11, letterSpacing: 1, textTransform: "uppercase",
+        padding: "8px 14px", borderRadius: "8px 8px 0 0", cursor: "pointer", whiteSpace: "nowrap",
+        border: tab === id ? "1px solid #2a2a3a" : "1px solid transparent",
+        borderBottom: tab === id ? "1px solid #111118" : "none",
+        background: tab === id ? "#111118" : "transparent",
+        color: tab === id ? "#f0f0f8" : "#666680",
+        marginBottom: tab === id ? -1 : 0,
+      }}>{label}</button>
+    ))}
+  </div>
+
+  {/* ===== TRACKER ===== */}
+  {tab === "tracker" && (
+    <div style={{ padding: "12px 8px", overflowX: "auto" }}>
+      <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: 0, minWidth: 480 }}>
+        <thead>
+          <tr>
+            <th style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 2, color: "#666680", padding: "8px 8px 8px 12px", textAlign: "left", background: "#111118", borderBottom: "1px solid #2a2a3a" }}>DAY</th>
+            {HABITS.map(h => (
+              <th key={h.key} style={{ fontFamily: "monospace", fontSize: 9, color: "#666680", padding: "8px 6px", textAlign: "center", background: "#111118", borderBottom: "1px solid #2a2a3a" }}>
+                <div>{h.emoji}</div>
+                <div style={{ fontSize: 8, marginTop: 2 }}>{h.label}</div>
+              </th>
+            ))}
+            <th style={{ fontFamily: "monospace", fontSize: 9, color: "#666680", padding: "8px 6px", textAlign: "center", background: "#111118", borderBottom: "1px solid #2a2a3a" }}>ALL</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Array.from({ length: 75 }, (_, i) => i + 1).map(day => {
+            const count = getDoneCount(day);
+            const all = count === 4;
+            const rowData = data[`d${day}`] || {};
+            const showWeek = (day - 1) % 7 === 0;
+            return (
+              <React.Fragment key={day}>
+                {showWeek && (
+                  <tr>
+                    <td colSpan={6} style={{ padding: "10px 0 2px 12px", borderBottom: "none" }}>
+                      <span style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: "#ff6b35", opacity: 0.7 }}>
+                        — WEEK {Math.ceil(day / 7)} —
+                      </span>
+                    </td>
+                  </tr>
+                )}
+                <tr style={{ background: all ? "rgba(6,214,160,0.04)" : "transparent" }}>
+                  <td style={{ padding: "6px 8px 6px 12px", borderBottom: "1px solid rgba(42,42,58,0.4)" }}>
+                    <div style={{ fontSize: 17, fontWeight: 800, color: all ? "#06d6a0" : count > 0 ? "#f0f0f8" : "#555570", lineHeight: 1 }}>D{String(day).padStart(2, "0")}</div>
+                    <div style={{ fontSize: 9, color: "#444460", fontFamily: "monospace" }}>{getDayDate(day)}</div>
+                  </td>
+                  {HABITS.map(h => {
+                    const checked = rowData[h.key] || false;
+                    return (
+                      <td key={h.key} style={{ textAlign: "center", borderBottom: "1px solid rgba(42,42,58,0.4)", padding: "6px 4px" }}>
+                        <div onClick={() => toggleHabit(day, h.key)} style={{
+                          width: 32, height: 32, borderRadius: 8, margin: "auto", cursor: "pointer",
+                          border: `2px solid ${checked ? h.color : "#2a2a3a"}`,
+                          background: checked ? `${h.color}25` : "transparent",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          fontSize: 15, fontWeight: 700, color: h.color,
+                          boxShadow: checked ? `0 0 8px ${h.color}44` : "none",
+                          transition: "all 0.15s",
+                        }}>
+                          {checked ? "✓" : ""}
+                        </div>
+                      </td>
+                    );
+                  })}
+                  <td style={{ textAlign: "center", borderBottom: "1px solid rgba(42,42,58,0.4)", fontSize: 18, opacity: all ? 1 : 0.12 }}>
+                    {all ? "🔥" : "○"}
+                  </td>
+                </tr>
+              </React.Fragment>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  )}
+
+  {/* ===== STUDY ===== */}
+  {tab === "study" && (
+    <div style={{ padding: 14 }}>
+      <div style={{ background: "rgba(255,107,53,0.1)", border: "1px solid rgba(255,107,53,0.3)", borderRadius: 12, padding: "12px 14px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12 }}>
+        <span style={{ fontSize: 24 }}>🧠</span>
+        <div>
+          <div style={{ fontWeight: 800, fontSize: 14, color: "#ffd166", letterSpacing: 1 }}>NIOS BOARD — PCM WARRIOR!</div>
+          <div style={{ fontSize: 11, color: "#666680", marginTop: 2 }}>Tick karo, aage badho — ek din ek kaam</div>
+        </div>
       </div>
-    </div>`;
-  }).join("");
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(270px, 1fr))", gap: 12 }}>
+        {STUDY_DATA.map((card, ci) => (
+          <div key={ci} style={{ background: "#16161f", border: "1px solid #2a2a3a", borderRadius: 14, padding: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: `${card.color}22`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 17 }}>{card.icon}</div>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 14, color: card.color }}>{card.title}</div>
+                <div style={{ fontSize: 10, color: "#666680" }}>{card.sub}</div>
+              </div>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {card.tasks.map((task, ti) => {
+                const done = data[`s${ci}_${ti}`] || false;
+                return (
+                  <div key={ti} onClick={() => toggleStudy(ci, ti)} style={{
+                    display: "flex", alignItems: "center", gap: 8, padding: "8px 10px",
+                    background: "#111118", borderRadius: 8, cursor: "pointer",
+                  }}>
+                    <div style={{
+                      width: 20, height: 20, borderRadius: 5, flexShrink: 0,
+                      border: `2px solid ${done ? "#06d6a0" : "#2a2a3a"}`,
+                      background: done ? "#06d6a0" : "transparent",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: 11, color: "#000", fontWeight: 700,
+                    }}>{done ? "✓" : ""}</div>
+                    <span style={{ fontSize: 12, fontWeight: 500, flex: 1, textDecoration: done ? "line-through" : "none", color: done ? "#555570" : "#f0f0f8" }}>{task.t}</span>
+                    <span style={{ fontSize: 10, color: "#444460", fontFamily: "monospace", whiteSpace: "nowrap" }}>{task.time}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+
+  {/* ===== STATS ===== */}
+  {tab === "stats" && (
+    <div style={{ padding: 14 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, marginBottom: 20 }}>
+        {[
+          { num: perfectDays, label: "Perfect Days" },
+          { num: streak, label: "Streak 🔥" },
+          { num: `${pct}%`, label: "Complete" },
+          { num: 75 - perfectDays, label: "Remaining" },
+          { num: Array.from({ length: 75 }, (_, i) => getDoneCount(i + 1)).reduce((a, b) => a + b, 0), label: "Total ✓" },
+          { num: 75, label: "Total Days" },
+        ].map((s, i) => (
+          <div key={i} style={{ background: "#16161f", border: "1px solid #2a2a3a", borderRadius: 14, padding: "14px 10px", textAlign: "center" }}>
+            <div style={{ fontSize: 32, fontWeight: 900, background: "linear-gradient(135deg,#ff6b35,#ffd166)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", lineHeight: 1 }}>{s.num}</div>
+            <div style={{ fontSize: 9, color: "#666680", letterSpacing: 1, textTransform: "uppercase", fontFamily: "monospace", marginTop: 4 }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ fontWeight: 700, fontSize: 16, color: "#666680", letterSpacing: 2, marginBottom: 12 }}>75-DAY HEATMAP</div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(15, 1fr)", gap: 4 }}>
+        {Array.from({ length: 75 }, (_, i) => i + 1).map(day => {
+          const score = getDoneCount(day);
+          const bg = ["#16161f","rgba(6,214,160,0.15)","rgba(6,214,160,0.35)","rgba(6,214,160,0.55)","rgba(6,214,160,0.85)"][score];
+          return (
+            <div key={day} style={{
+              aspectRatio: "1", borderRadius: 4, background: bg,
+              border: `1px solid ${score > 0 ? "rgba(6,214,160,0.3)" : "#2a2a3a"}`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 8, color: score === 4 ? "#000" : "#555570", fontFamily: "monospace",
+            }}>{day}</div>
+          );
+        })}
+      </div>
+    </div>
+  )}
+</div>
+```
+
+);
 }
-
-// =====================
-// PROGRESS RING + HEADER
-// =====================
-function updateHeader() {
-  const perfect = getPerfectDays();
-  const pct = perfect / 75;
-  const circ = 175.9;
-  document.getElementById("prog-arc").setAttribute("stroke-dashoffset", circ - circ * pct);
-  document.getElementById("prog-num").textContent = perfect;
-}
-
-function updateAll() {
-  buildTracker();
-  buildStudy();
-  buildStats();
-  updateHeader();
-}
-
-// =====================
-// QUOTE
-// =====================
-function showQuote() {
-  const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
-  const el = document.getElementById("quote-banner");
-  el.style.display = "flex";
-  el.innerHTML = `
-    <span class="quote-icon">${q.icon}</span>
-    <div>
-      <div class="quote-text">"${q.text}"</div>
-      <div class="quote-author">${q.author}</div>
-    </div>`;
-}
-
-// =====================
-// TOAST
-// =====================
-let toastTimer;
-function showToast(msg = "✓ Saved!") {
-  const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.classList.add("show");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove("show"), 1800);
-}
-
-// =====================
-// TABS
-// =====================
-document.querySelectorAll(".tab-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-    btn.classList.add("active");
-    document.getElementById("panel-" + btn.dataset.tab).classList.add("active");
-  });
-});
-
-// =====================
-// RESET
-// =====================
-document.getElementById("reset-btn").addEventListener("click", () => {
-  if (confirm("Bhai sure hai? Saara data delete ho jaayega! 😱")) {
-    localStorage.removeItem(SK);
-    DATA = {};
-    updateAll();
-    showToast("💥 Reset Done!");
-  }
-});
-
-// =====================
-// PWA INSTALL
-// =====================
-let deferredPrompt;
-window.addEventListener("beforeinstallprompt", e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  document.getElementById("install-banner").classList.add("visible");
-});
-
-document.getElementById("install-btn").addEventListener("click", async () => {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === "accepted") {
-      document.getElementById("install-banner").classList.remove("visible");
-    }
-    deferredPrompt = null;
-  }
-});
-
-// =====================
-// DYNAMIC HEADER HEIGHT (sticky tabs offset)
-// =====================
-function fixTabsTop() {
-  const h = document.getElementById("header").offsetHeight;
-  document.getElementById("tabs").style.top = h + "px";
-}
-window.addEventListener("resize", fixTabsTop);
-
-// =====================
-// INIT
-// =====================
-updateAll();
-showQuote();
-fixTabsTop();
-</script>
-</body>
-</html>
