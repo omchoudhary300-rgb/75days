@@ -2,136 +2,111 @@
 
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>75 Days 🔥 — NIOS PCM Warrior</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>75 Days Challenge 🔥</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: sans-serif; background: #0a0a0f; color: #f0f0f8; min-height: 100vh; }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:#09090f;color:#f0f0f8;font-family:'DM Sans',system-ui,sans-serif;min-height:100vh;padding-bottom:60px}
 
-.header {
-background: linear-gradient(135deg,#0a0a0f,#1a0a1f,#0a0a0f);
-border-bottom: 1px solid #2a2a3a;
-padding: 18px 16px 14px;
-position: sticky; top: 0; z-index: 100;
-}
-.header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.title-text {
-font-size: 36px; font-weight: 900; letter-spacing: 2px;
-background: linear-gradient(135deg,#ff6b35,#ffd166);
--webkit-background-clip: text; -webkit-text-fill-color: transparent;
-background-clip: text; line-height: 1;
-}
-.title-sub { font-size: 10px; color: #666680; letter-spacing: 2px; text-transform: uppercase; margin-top: 3px; }
+/* HEADER */
+.head{background:linear-gradient(135deg,#09090f,#140a1f,#09090f);border-bottom:1px solid #1e1e2e;padding:16px 14px 12px;position:sticky;top:0;z-index:50}
+.title{font-family:‘Bebas Neue’,cursive;font-size:38px;letter-spacing:3px;background:linear-gradient(135deg,#ff6b35,#ffd166);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.sub{font-family:‘Space Mono’,monospace;font-size:10px;color:#555570;letter-spacing:2px;text-transform:uppercase;margin-top:3px}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.pill{display:flex;align-items:center;gap:5px;background:#13131f;border:1px solid #1e1e2e;border-radius:20px;padding:4px 10px;font-size:11px}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.saved{font-size:11px;color:#06d6a0;margin-left:4px;font-weight:600}
+.ring-wrap{position:relative;width:64px;height:64px;flex-shrink:0}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-text{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-num{font-family:‘Bebas Neue’,cursive;font-size:20px;color:#ffd166;line-height:1}
+.ring-lbl{font-size:7px;color:#555570;letter-spacing:1px;text-transform:uppercase}
 
-.ring-wrap { text-align: center; position: relative; width: 64px; }
-.ring-wrap svg { transform: rotate(-90deg); }
-.ring-number { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); font-size: 20px; font-weight: 900; color: #ffd166; line-height: 1; }
-.ring-label { font-size: 8px; color: #666680; letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid #1e1e2e;background:#09090f;position:sticky;top:128px;z-index:49;padding:0 10px;overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{font-family:‘Space Mono’,monospace;padding:10px 12px;font-size:10px;font-weight:600;cursor:pointer;border:none;background:transparent;color:#555570;border-bottom:2px solid transparent;transition:all 0.15s;white-space:nowrap;letter-spacing:1px}
+.tab.on{color:#f0f0f8;border-bottom:2px solid #ff6b35}
 
-.habit-pills { display: flex; gap: 7px; flex-wrap: wrap; }
-.habit-pill {
-display: flex; align-items: center; gap: 5px;
-background: #16161f; border: 1px solid #2a2a3a; border-radius: 20px;
-padding: 4px 10px; font-size: 11px;
-}
-.dot { width: 6px; height: 6px; border-radius: 50%; }
-.saving-pill {
-display: flex; align-items: center; gap: 5px;
-background: rgba(6,214,160,0.1); border: 1px solid rgba(6,214,160,0.3);
-border-radius: 20px; padding: 4px 10px; font-size: 11px; color: #06d6a0;
-}
-
-.tabs {
-display: flex; gap: 4px; padding: 10px 16px 0;
-border-bottom: 1px solid #2a2a3a; background: #0a0a0f;
-position: sticky; top: 132px; z-index: 99;
-}
-.tab-btn {
-font-family: monospace; font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
-padding: 8px 14px; border-radius: 8px 8px 0 0; cursor: pointer; white-space: nowrap;
-border: 1px solid transparent; border-bottom: none;
-background: transparent; color: #666680; transition: all 0.15s;
-}
-.tab-btn.active {
-border: 1px solid #2a2a3a; border-bottom: 1px solid #111118;
-background: #111118; color: #f0f0f8; margin-bottom: -1px;
-}
+/* VIEWS */
+.view{display:none}
+.view.on{display:block}
 
 /* TRACKER */
-#tab-tracker { padding: 12px 8px; overflow-x: auto; }
-table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 480px; }
-thead th {
-font-family: monospace; font-size: 9px; letter-spacing: 2px; color: #666680;
-padding: 8px 6px; background: #111118; border-bottom: 1px solid #2a2a3a; text-align: center;
-}
-thead th:first-child { text-align: left; padding-left: 12px; }
-.week-row td { padding: 10px 0 2px 12px; }
-.week-label { font-family: monospace; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #ff6b35; opacity: 0.7; }
-.day-row td { border-bottom: 1px solid rgba(42,42,58,0.4); padding: 6px 4px; text-align: center; }
-.day-row td:first-child { padding-left: 12px; text-align: left; }
-.day-num { font-size: 17px; font-weight: 800; line-height: 1; }
-.day-date { font-size: 9px; color: #444460; font-family: monospace; }
-.habit-box {
-width: 32px; height: 32px; border-radius: 8px; margin: auto; cursor: pointer;
-border: 2px solid #2a2a3a; background: transparent;
-display: flex; align-items: center; justify-content: center;
-font-size: 15px; font-weight: 700; transition: all 0.15s;
-}
-.fire-cell { font-size: 18px; }
+.tbl-wrap{overflow-x:auto;padding:8px 0}
+table{width:100%;border-collapse:collapse;min-width:520px}
+thead th{padding:8px 6px;font-size:9px;color:#555570;font-family:‘Space Mono’,monospace;font-weight:400;letter-spacing:1px;text-transform:uppercase;background:#0d0d1a;text-align:center;border-bottom:1px solid #1e1e2e}
+thead th:first-child{text-align:left;padding-left:14px}
+.wk td{padding:10px 0 2px 14px;font-size:9px;font-family:‘Space Mono’,monospace;letter-spacing:3px;color:#ff6b35;opacity:.6;text-transform:uppercase;border:none;background:#09090f}
+.drow{border-bottom:1px solid rgba(30,30,46,.6);transition:background 0.15s}
+.drow.all{background:rgba(6,214,160,.04)}
+.dnum{font-family:‘Bebas Neue’,cursive;font-size:18px;line-height:1}
+.ddate{font-size:9px;color:#333350;font-family:‘Space Mono’,monospace}
+.chk{width:34px;height:34px;border-radius:9px;margin:auto;cursor:pointer;border:2px solid #1e1e2e;background:transparent;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;transition:all .2s;user-select:none}
 
-/* STUDY */
-#tab-study { padding: 14px; }
-.study-banner {
-background: rgba(255,107,53,0.1); border: 1px solid rgba(255,107,53,0.3);
-border-radius: 12px; padding: 12px 14px; margin-bottom: 16px;
-display: flex; align-items: center; gap: 12px;
-}
-.study-banner-icon { font-size: 24px; }
-.study-banner-title { font-weight: 800; font-size: 14px; color: #ffd166; letter-spacing: 1px; }
-.study-banner-sub { font-size: 11px; color: #666680; margin-top: 2px; }
-.study-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; }
-.study-card { background: #16161f; border: 1px solid #2a2a3a; border-radius: 14px; padding: 14px; }
-.study-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-.study-card-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
-.study-card-title { font-weight: 700; font-size: 14px; }
-.study-card-sub { font-size: 10px; color: #666680; }
-.task-list { display: flex; flex-direction: column; gap: 6px; }
-.task-item {
-display: flex; align-items: center; gap: 8px; padding: 8px 10px;
-background: #111118; border-radius: 8px; cursor: pointer;
-}
-.task-check {
-width: 20px; height: 20px; border-radius: 5px; flex-shrink: 0;
-border: 2px solid #2a2a3a; background: transparent;
-display: flex; align-items: center; justify-content: center;
-font-size: 11px; color: #000; font-weight: 700; transition: all 0.15s;
-}
-.task-check.done { border-color: #06d6a0; background: #06d6a0; }
-.task-text { font-size: 12px; font-weight: 500; flex: 1; }
-.task-text.done { text-decoration: line-through; color: #555570; }
-.task-time { font-size: 10px; color: #444460; font-family: monospace; white-space: nowrap; }
+/* STUDY / ENGLISH CARDS */
+.section-wrap{padding:14px}
+.banner{border-radius:12px;padding:12px 14px;margin-bottom:16px;display:flex;gap:12px;align-items:center}
+.sgrid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.card{background:#13131f;border:1px solid #1e1e2e;border-radius:14px;padding:14px}
+.card-head{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+.cicon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ctitle{font-family:‘Bebas Neue’,cursive;font-size:18px;letter-spacing:1px}
+.csub{font-size:10px;color:#555570;margin-top:1px}
+.task{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#0d0d1a;border-radius:8px;cursor:pointer;margin-bottom:6px;transition:all .15s}
+.task:last-child{margin-bottom:0}
+.tbox{width:20px;height:20px;border-radius:5px;flex-shrink:0;border:2px solid #1e1e2e;background:transparent;display:flex;align-items:center;justify-content:center;font-size:11px;color:#000;font-weight:800;transition:all .2s}
+.tbox.on{background:#06d6a0;border-color:#06d6a0}
+.ttxt{font-size:12px;flex:1;transition:all .2s;font-weight:500}
+.ttxt.on{text-decoration:line-through;color:#444460}
+.ttime{font-family:‘Space Mono’,monospace;font-size:10px;color:#444460;white-space:nowrap;flex-shrink:0}
 
 /* STATS */
-#tab-stats { padding: 14px; }
-.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-.stat-card { background: #16161f; border: 1px solid #2a2a3a; border-radius: 14px; padding: 14px 10px; text-align: center; }
-.stat-num {
-font-size: 32px; font-weight: 900;
-background: linear-gradient(135deg,#ff6b35,#ffd166);
--webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1;
-}
-.stat-label { font-size: 9px; color: #666680; letter-spacing: 1px; text-transform: uppercase; font-family: monospace; margin-top: 4px; }
-.heatmap-label { font-weight: 700; font-size: 16px; color: #666680; letter-spacing: 2px; margin-bottom: 12px; }
-.heatmap { display: grid; grid-template-columns: repeat(15, 1fr); gap: 4px; }
-.heatmap-cell {
-aspect-ratio: 1; border-radius: 4px; background: #16161f;
-border: 1px solid #2a2a3a;
-display: flex; align-items: center; justify-content: center;
-font-size: 8px; color: #555570; font-family: monospace;
-}
+.stats-wrap{padding:14px}
+.stat-top{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.sbox{background:#13131f;border:1px solid #1e1e2e;border-radius:14px;padding:14px 10px;text-align:center;position:relative;overflow:hidden}
+.sbox::after{content:’’;position:absolute;top:0;left:0;right:0;height:2px;background:var(–c,#ff6b35)}
+.sn{font-family:‘Bebas Neue’,cursive;font-size:34px;background:linear-gradient(135deg,#ff6b35,#ffd166);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.sl{font-size:9px;color:#555570;letter-spacing:1px;text-transform:uppercase;font-family:‘Space Mono’,monospace;margin-top:4px}
 
-.hidden { display: none !important; }
+/* PROGRESS BARS */
+.habit-bars{margin-bottom:24px}
+.hbar-title{font-family:‘Bebas Neue’,cursive;font-size:18px;color:#555570;letter-spacing:2px;margin-bottom:12px}
+.hbar-row{margin-bottom:10px}
+.hbar-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.hbar-name{font-size:12px;font-weight:600}
+.hbar-pct{font-family:‘Space Mono’,monospace;font-size:11px;color:#555570}
+.hbar-bg{background:#1e1e2e;border-radius:6px;height:8px;overflow:hidden}
+.hbar-fill{height:100%;border-radius:6px;transition:width 0.8s ease}
+
+/* WEEK ANALYSIS */
+.week-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-bottom:24px}
+.wbox{background:#13131f;border:1px solid #1e1e2e;border-radius:10px;padding:10px;text-align:center}
+.wbox-num{font-family:‘Bebas Neue’,cursive;font-size:22px;color:#ffd166;line-height:1}
+.wbox-label{font-size:9px;color:#555570;font-family:‘Space Mono’,monospace;text-transform:uppercase;margin-top:2px}
+.wbox-bar{height:4px;border-radius:2px;margin-top:6px;background:#1e1e2e;overflow:hidden}
+.wbox-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#ff6b35,#ffd166)}
+
+/* HEATMAP */
+.hmap-title{font-family:‘Bebas Neue’,cursive;font-size:18px;color:#555570;letter-spacing:2px;margin-bottom:12px}
+.hmap{display:grid;grid-template-columns:repeat(15,1fr);gap:4px;margin-bottom:24px}
+.hcell{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:7px;color:#444460;font-family:‘Space Mono’,monospace;border:1px solid #1e1e2e;background:#13131f;transition:all .2s}
+
+/* ENGLISH SPEAKING */
+.eng-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.eng-card{background:#13131f;border:1px solid #1e1e2e;border-radius:14px;padding:14px}
+.eng-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(76,201,240,0.1);border:1px solid rgba(76,201,240,0.3);border-radius:20px;padding:3px 10px;font-size:10px;color:#4cc9f0;font-family:‘Space Mono’,monospace;margin-bottom:12px}
+.act-item{display:flex;align-items:flex-start;gap:10px;padding:10px;background:#0d0d1a;border-radius:10px;margin-bottom:8px;cursor:pointer;transition:all .15s}
+.act-item:last-child{margin-bottom:0}
+.act-left{flex:1}
+.act-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.act-desc{font-size:11px;color:#555570;line-height:1.4}
+.act-dur{font-family:‘Space Mono’,monospace;font-size:10px;color:#444460;white-space:nowrap;margin-top:4px;display:block}
+
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+.pop{animation:pop .2s ease}
 </style>
 
 </head>
@@ -139,401 +114,467 @@ font-size: 8px; color: #555570; font-family: monospace;
 
 <!-- HEADER -->
 
-<div class="header">
-  <div class="header-top">
+<div class="head">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
     <div>
-      <div class="title-text">75 DAYS 🔥</div>
-      <div class="title-sub">NIOS Class 12 PCM • 25 Mar – 7 Jun</div>
+      <div class="title">75 DAYS 🔥</div>
+      <div class="sub">NIOS Class 12 PCM • 25 Mar – 7 Jun 2025</div>
     </div>
     <div class="ring-wrap">
       <svg width="64" height="64" viewBox="0 0 64 64">
-        <circle cx="32" cy="32" r="26" fill="none" stroke="#2a2a3a" stroke-width="5"/>
-        <circle id="progress-ring" cx="32" cy="32" r="26" fill="none" stroke="url(#g1)" stroke-width="5"
-          stroke-linecap="round" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
-        <defs>
-          <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#ff6b35"/>
-            <stop offset="100%" stop-color="#ffd166"/>
-          </linearGradient>
-        </defs>
+        <defs><linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#ff6b35"/>
+          <stop offset="100%" stop-color="#ffd166"/>
+        </linearGradient></defs>
+        <circle cx="32" cy="32" r="26" fill="none" stroke="#1e1e2e" stroke-width="5"/>
+        <circle id="ringArc" cx="32" cy="32" r="26" fill="none" stroke="url(#rg)" stroke-width="5" stroke-linecap="round" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
       </svg>
-      <div class="ring-number" id="ring-num">0</div>
-      <div class="ring-label">DONE</div>
+      <div class="ring-text">
+        <span class="ring-num" id="ringN">0</span>
+        <span class="ring-lbl">DONE</span>
+      </div>
     </div>
   </div>
-  <div class="habit-pills" id="habit-pills-container"></div>
+  <div class="pills">
+    <div class="pill"><div class="dot" style="background:#ff6b35"></div>🚫🍭 No Sugar</div>
+    <div class="pill"><div class="dot" style="background:#ef476f"></div>🚫🍟 No Junk</div>
+    <div class="pill"><div class="dot" style="background:#ffd166"></div>👟 8-10K Steps</div>
+    <div class="pill"><div class="dot" style="background:#118ab2"></div>🌅 Early Rise</div>
+    <div class="pill"><div class="dot" style="background:#06d6a0"></div>💪 Workout</div>
+    <span class="saved" id="sv" style="display:none">✓ Saved!</span>
+  </div>
 </div>
 
 <!-- TABS -->
 
 <div class="tabs">
-  <button class="tab-btn active" onclick="setTab('tracker')">📋 Tracker</button>
-  <button class="tab-btn" onclick="setTab('study')">📚 Study</button>
-  <button class="tab-btn" onclick="setTab('stats')">📊 Stats</button>
+  <button class="tab on" onclick="show('tracker',this)">📋 Tracker</button>
+  <button class="tab" onclick="show('study',this)">📚 Study</button>
+  <button class="tab" onclick="show('english',this)">🗣️ English</button>
+  <button class="tab" onclick="show('stats',this)">📊 Stats</button>
 </div>
 
-<!-- TRACKER TAB -->
+<!-- TRACKER VIEW -->
 
-<div id="tab-tracker">
-  <div style="overflow-x:auto;">
-    <table id="tracker-table">
-      <thead>
-        <tr>
-          <th style="text-align:left;padding-left:12px;">DAY</th>
-          <th>🚫🍭<div style="font-size:8px;margin-top:2px;">No Sugar</div></th>
-          <th>🚫🍟<div style="font-size:8px;margin-top:2px;">No Junk</div></th>
-          <th>👟<div style="font-size:8px;margin-top:2px;">8-10K Steps</div></th>
-          <th>🌅<div style="font-size:8px;margin-top:2px;">Early Rise</div></th>
-          <th>ALL</th>
-        </tr>
-      </thead>
-      <tbody id="tracker-body"></tbody>
+<div id="v-tracker" class="view on">
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th style="text-align:left;padding-left:14px">DAY</th>
+        <th>🚫🍭<br><span style="font-size:8px">SUGAR</span></th>
+        <th>🚫🍟<br><span style="font-size:8px">JUNK</span></th>
+        <th>👟<br><span style="font-size:8px">STEPS</span></th>
+        <th>🌅<br><span style="font-size:8px">EARLY</span></th>
+        <th>💪<br><span style="font-size:8px">WORKOUT</span></th>
+        <th>🔥<br><span style="font-size:8px">ALL</span></th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
     </table>
   </div>
 </div>
 
-<!-- STUDY TAB -->
+<!-- STUDY VIEW -->
 
-<div id="tab-study" class="hidden">
-  <div class="study-banner">
-    <span class="study-banner-icon">🧠</span>
-    <div>
-      <div class="study-banner-title">NIOS BOARD — PCM WARRIOR!</div>
-      <div class="study-banner-sub">Tick karo, aage badho — ek din ek kaam</div>
+<div id="v-study" class="view">
+  <div class="section-wrap">
+    <div class="banner" style="background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.25)">
+      <span style="font-size:22px">🧠</span>
+      <div>
+        <div style="font-family:'Bebas Neue',cursive;font-size:16px;color:#ffd166;letter-spacing:1px">NIOS BOARD — PCM WARRIOR!</div>
+        <div style="font-size:11px;color:#555570;margin-top:2px">Tick karo, aage badho. Ek din ek kaam.</div>
+      </div>
     </div>
+    <div class="sgrid-cards" id="studyGrid"></div>
   </div>
-  <div class="study-grid" id="study-grid"></div>
 </div>
 
-<!-- STATS TAB -->
+<!-- ENGLISH VIEW -->
 
-<div id="tab-stats" class="hidden">
-  <div class="stats-grid" id="stats-grid"></div>
-  <div class="heatmap-label">75-DAY HEATMAP</div>
-  <div class="heatmap" id="heatmap"></div>
+<div id="v-english" class="view">
+  <div class="section-wrap">
+    <div class="banner" style="background:rgba(76,201,240,.08);border:1px solid rgba(76,201,240,.25)">
+      <span style="font-size:22px">🗣️</span>
+      <div>
+        <div style="font-family:'Bebas Neue',cursive;font-size:16px;color:#4cc9f0;letter-spacing:1px">ENGLISH SPEAKING PRACTICE</div>
+        <div style="font-size:11px;color:#555570;margin-top:2px">Roz karo — fluency aayegi zaroor! Consistency is key.</div>
+      </div>
+    </div>
+
+```
+<!-- ENGLISH COACHING CARDS -->
+<div style="font-family:'Bebas Neue',cursive;font-size:16px;color:#555570;letter-spacing:2px;margin-bottom:12px">📖 DAILY COACHING TASKS</div>
+<div class="sgrid-cards" id="engCoachGrid"></div>
+
+<div style="font-family:'Bebas Neue',cursive;font-size:16px;color:#555570;letter-spacing:2px;margin:20px 0 12px">🎯 SPEAKING ACTIVITIES</div>
+<div class="eng-grid" id="engActGrid"></div>
+```
+
+  </div>
+</div>
+
+<!-- STATS VIEW -->
+
+<div id="v-stats" class="view">
+  <div class="stats-wrap">
+    <!-- TOP STATS -->
+    <div class="stat-top" id="statTop"></div>
+
+```
+<!-- HABIT PROGRESS BARS -->
+<div class="habit-bars">
+  <div class="hbar-title">HABIT PROGRESS</div>
+  <div id="habitBars"></div>
+</div>
+
+<!-- WEEKLY BREAKDOWN -->
+<div class="hbar-title">WEEKLY BREAKDOWN</div>
+<div class="week-grid" id="weekGrid"></div>
+
+<!-- HEATMAP -->
+<div class="hmap-title">75-DAY HEATMAP</div>
+<div class="hmap" id="hmap"></div>
+```
+
+  </div>
 </div>
 
 <script>
 const HABITS = [
-  { key: "sugar", label: "No Sugar", emoji: "🚫🍭", color: "#ff6b35" },
-  { key: "junk",  label: "No Junk",  emoji: "🚫🍟", color: "#ef476f" },
-  { key: "steps", label: "8-10K Steps", emoji: "👟",  color: "#ffd166" },
-  { key: "rise",  label: "Early Rise", emoji: "🌅",  color: "#118ab2" },
+  {key:'sugar', label:'No Sugar',   emoji:'🚫🍭', color:'#ff6b35'},
+  {key:'junk',  label:'No Junk',    emoji:'🚫🍟', color:'#ef476f'},
+  {key:'steps', label:'8-10K Steps',emoji:'👟',   color:'#ffd166'},
+  {key:'rise',  label:'Early Rise', emoji:'🌅',   color:'#118ab2'},
+  {key:'workout',label:'Workout',   emoji:'💪',   color:'#06d6a0'},
 ];
 
 const STUDY_DATA = [
-  { icon:"📐", color:"#4cc9f0", title:"Mathematics (311)", sub:"NIOS Class 12", tasks:[
-    { t:"Relations & Functions — theory + examples", time:"40 min" },
-    { t:"Calculus — Differentiation / Integration", time:"45 min" },
-    { t:"Matrices & Determinants — numericals", time:"35 min" },
-    { t:"NIOS TMA / Prev year MCQs (15 qs)", time:"30 min" },
+  {icon:'📐',color:'#4cc9f0',bg:'rgba(76,201,240,.15)',title:'Mathematics (311)',sub:'NIOS Class 12',tasks:[
+    {t:'Relations & Functions — theory + examples',time:'40 min'},
+    {t:'Calculus — Differentiation / Integration',time:'45 min'},
+    {t:'Matrices & Determinants — numericals',time:'35 min'},
+    {t:'NIOS TMA / Prev year MCQs (15 qs)',time:'30 min'},
   ]},
-  { icon:"⚡", color:"#06d6a0", title:"Physics (312)", sub:"NIOS Class 12", tasks:[
-    { t:"Electrostatics / Current Electricity — read", time:"40 min" },
-    { t:"Formulas list banao & yaad karo", time:"20 min" },
-    { t:"Numerical practice (10 qs)", time:"35 min" },
-    { t:"Ray Optics / Wave Optics — diagrams", time:"20 min" },
+  {icon:'⚡',color:'#06d6a0',bg:'rgba(6,214,160,.15)',title:'Physics (312)',sub:'NIOS Class 12',tasks:[
+    {t:'Electrostatics / Current Electricity — read',time:'40 min'},
+    {t:'Formulas list banao & yaad karo',time:'20 min'},
+    {t:'Numerical practice (10 qs)',time:'35 min'},
+    {t:'Ray Optics / Wave Optics — diagrams',time:'20 min'},
   ]},
-  { icon:"🧪", color:"#c77dff", title:"Chemistry (313)", sub:"NIOS Class 12", tasks:[
-    { t:"Solid State / Solutions / Electrochemistry", time:"35 min" },
-    { t:"Organic Chemistry — reactions & mechanisms", time:"40 min" },
-    { t:"Chemical equations balance practice", time:"20 min" },
-    { t:"NIOS sample paper MCQs (10 qs)", time:"20 min" },
+  {icon:'🧪',color:'#c77dff',bg:'rgba(199,125,255,.15)',title:'Chemistry (313)',sub:'NIOS Class 12',tasks:[
+    {t:'Solid State / Solutions / Electrochemistry',time:'35 min'},
+    {t:'Organic Chemistry — reactions & mechanisms',time:'40 min'},
+    {t:'Chemical equations balance practice',time:'20 min'},
+    {t:'NIOS sample paper MCQs (10 qs)',time:'20 min'},
   ]},
-  { icon:"✍️", color:"#ff6b35", title:"English (302)", sub:"NIOS Class 12", tasks:[
-    { t:"Reading Comprehension passage (1)", time:"20 min" },
-    { t:"Letter / Essay / Notice writing practice", time:"25 min" },
-    { t:"Grammar — tenses, voice, narration", time:"20 min" },
-    { t:"10 new vocabulary / idioms", time:"15 min" },
+  {icon:'✍️',color:'#ff6b35',bg:'rgba(255,107,53,.15)',title:'English (302)',sub:'NIOS Class 12',tasks:[
+    {t:'Reading Comprehension passage (1)',time:'20 min'},
+    {t:'Letter / Essay / Notice writing practice',time:'25 min'},
+    {t:'Grammar — tenses, voice, narration',time:'20 min'},
+    {t:'10 new vocabulary / idioms',time:'15 min'},
   ]},
-  { icon:"📋", color:"#ffd166", title:"NIOS TMA Work", sub:"Submit karna hai!", tasks:[
-    { t:"TMA question solve karo (1-2 qs)", time:"45 min" },
-    { t:"NIOS SLM — 1 lesson read karo", time:"30 min" },
-    { t:"On Demand Exam practice paper", time:"40 min" },
+  {icon:'📋',color:'#ffd166',bg:'rgba(255,209,102,.15)',title:'NIOS TMA Work',sub:'Submit karna hai!',tasks:[
+    {t:'TMA question solve karo (1-2 qs)',time:'45 min'},
+    {t:'NIOS SLM — 1 lesson read karo',time:'30 min'},
+    {t:'On Demand Exam practice paper',time:'40 min'},
   ]},
-  { icon:"🔁", color:"#f72585", title:"Daily Revision", sub:"Sab subjects thoda thoda", tasks:[
-    { t:"Morning — PCM formulas & key points revise", time:"20 min" },
-    { t:"Flashcards — Chemistry reactions / Maths", time:"15 min" },
-    { t:"Weekly mock test (1 full subject paper)", time:"90 min" },
+  {icon:'💪',color:'#f72585',bg:'rgba(247,37,133,.15)',title:'Workout / Yoga',sub:'Body + Mind = Focus',tasks:[
+    {t:'Morning stretching / yoga (Sun Salutation)',time:'15 min'},
+    {t:'Cardio — walk/jog/skipping',time:'20 min'},
+    {t:'Strength — pushups, squats, plank',time:'20 min'},
+    {t:'Evening cool-down + deep breathing',time:'10 min'},
+  ]},
+  {icon:'🔁',color:'#888',bg:'rgba(136,136,136,.15)',title:'Daily Revision',sub:'Sab subjects thoda thoda',tasks:[
+    {t:'Morning PCM formulas & key points revise',time:'20 min'},
+    {t:'Flashcards — Chem reactions / Maths formulas',time:'15 min'},
+    {t:'Weekly mock test (1 full subject paper)',time:'90 min'},
   ]},
 ];
 
-// ---- Storage ----
-let appData = {};
+const ENG_COACHING = [
+  {icon:'📚',color:'#4cc9f0',bg:'rgba(76,201,240,.15)',title:'Grammar & Writing',sub:'Foundation strong karo',tasks:[
+    {t:'Grammar rule of the day (1 topic)',time:'15 min'},
+    {t:'5 sentences banao us rule se',time:'10 min'},
+    {t:'Diary entry in English likhon',time:'15 min'},
+    {t:'Error correction exercise (10 qs)',time:'15 min'},
+  ]},
+  {icon:'📖',color:'#ffd166',bg:'rgba(255,209,102,.15)',title:'Reading & Vocab',sub:'Roz padho, roz seekho',tasks:[
+    {t:'English article/story read karo (1 page)',time:'15 min'},
+    {t:'10 new words — meaning + sentence',time:'15 min'},
+    {t:'Idioms & phrases practice (5)',time:'10 min'},
+    {t:'Newspaper headlines padhna',time:'10 min'},
+  ]},
+  {icon:'🎧',color:'#c77dff',bg:'rgba(199,125,255,.15)',title:'Listening Skills',sub:'Sunke seekho',tasks:[
+    {t:'English podcast / TED talk sunna (15 min)',time:'15 min'},
+    {t:'English movie/show (subtitles ke saath)',time:'30 min'},
+    {t:'Dictation practice — jo suna wo likho',time:'10 min'},
+  ]},
+];
 
-function storageKey() { return "habits_75days"; }
+const ENG_ACTIVITIES = [
+  {icon:'🗣️',color:'#06d6a0',title:'Mirror Speaking',badge:'DAILY • 10 MIN',desc:'Apne aap se English mein baat karo. Topic: apna din, apne goals, koi bhi cheez. Mirror ke saamne bolte raho.',dur:'10 min daily'},
+  {icon:'📢',color:'#ff6b35',title:'Topic Talk',badge:'DAILY • 5 MIN',desc:'Koi bhi topic chuno (cricket, movies, future plans) aur 5 minute bina rukke English mein bolte raho. Timer lagao!',dur:'5 min non-stop'},
+  {icon:'🎤',color:'#c77dff',title:'Shadowing',badge:'DAILY • 10 MIN',desc:'English video sunno aur saath mein repeat karo — same tone, same speed. BBC Learning English ya YouTube use karo.',dur:'10 min'},
+  {icon:'💬',color:'#4cc9f0',title:'Sentence Building',badge:'DAILY • 10 MIN',desc:'Roz 10 complex sentences banao — conditionals, passive voice, relative clauses. Likhna bhi hai!',dur:'10 min'},
+  {icon:'📝',color:'#ffd166',title:'English Journal',badge:'DAILY • 10 MIN',desc:'Apna din English mein likho. Mistakes mat socho — bas likho. Fluency writing se bhi aati hai.',dur:'10 min'},
+  {icon:'🤝',color:'#f72585',title:'Weekly Speaking Test',badge:'WEEKLY • 5 MIN',desc:'Koi bhi topic pe 5 minute ki speech record karo. Apni recording suno aur mistakes note karo.',dur:'5 min recording'},
+];
 
-function saveData() {
-  try { localStorage.setItem(storageKey(), JSON.stringify(appData)); } catch(e){}
+function getDate(n){
+  const d=new Date(2025,2,25);
+  d.setDate(d.getDate()+n-1);
+  return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
 }
 
-function loadData() {
-  try {
-    const raw = localStorage.getItem(storageKey());
-    if (raw) appData = JSON.parse(raw);
-  } catch(e){}
+let D={};
+try{D=JSON.parse(localStorage.getItem('75v3')||'{}');}catch(e){}
+
+function persist(){
+  try{
+    localStorage.setItem('75v3',JSON.stringify(D));
+    const s=document.getElementById('sv');
+    s.style.display='inline';
+    setTimeout(()=>s.style.display='none',1200);
+  }catch(e){}
 }
 
-// ---- Helpers ----
-function getDayDate(dayNum) {
-  const d = new Date(2025, 2, 25);
-  d.setDate(d.getDate() + dayNum - 1);
-  return d.toLocaleDateString("en-IN", { day:"2-digit", month:"short" });
+function score(day){return HABITS.filter(h=>D[`h_${day}_${h.key}`]).length;}
+function isAll(day){return score(day)===HABITS.length;}
+
+function updateRing(){
+  let p=0;
+  for(let i=1;i<=75;i++) if(isAll(i)) p++;
+  const pct=p/75;
+  document.getElementById('ringArc').setAttribute('stroke-dashoffset',163.4-(163.4*pct));
+  document.getElementById('ringN').textContent=p;
 }
 
-function getDoneCount(day) {
-  const row = appData[`d${day}`] || {};
-  return HABITS.filter(h => row[h.key]).length;
-}
-
-function isAllDone(day) { return getDoneCount(day) === 4; }
-
-function getPerfectDays() {
-  let count = 0;
-  for (let d = 1; d <= 75; d++) if (isAllDone(d)) count++;
-  return count;
-}
-
-function getStreak() {
-  let streak = 0;
-  for (let d = 75; d >= 1; d--) {
-    if (isAllDone(d)) streak++; else break;
-  }
-  return streak;
-}
-
-function getTotalChecks() {
-  let total = 0;
-  for (let d = 1; d <= 75; d++) total += getDoneCount(d);
-  return total;
-}
-
-// ---- Tab switching ----
-let currentTab = "tracker";
-
-function setTab(id) {
-  currentTab = id;
-  document.querySelectorAll(".tab-btn").forEach((b, i) => {
-    b.classList.toggle("active", ["tracker","study","stats"][i] === id);
-  });
-  ["tracker","study","stats"].forEach(t => {
-    document.getElementById(`tab-${t}`).classList.toggle("hidden", t !== id);
-  });
-  if (id === "stats") renderStats();
-}
-
-// ---- Render Header Pills ----
-function renderPills() {
-  const container = document.getElementById("habit-pills-container");
-  container.innerHTML = "";
-  HABITS.forEach(h => {
-    const pill = document.createElement("div");
-    pill.className = "habit-pill";
-    pill.innerHTML = `<div class="dot" style="background:${h.color}"></div>${h.emoji} ${h.label}`;
-    container.appendChild(pill);
-  });
-}
-
-// ---- Render ring ----
-function updateRing() {
-  const perfect = getPerfectDays();
-  const pct = perfect / 75;
-  const circumference = 163.4;
-  document.getElementById("progress-ring").setAttribute("stroke-dashoffset", circumference - circumference * pct);
-  document.getElementById("ring-num").textContent = perfect;
-}
-
-// ---- Tracker ----
-function renderTracker() {
-  const tbody = document.getElementById("tracker-body");
-  tbody.innerHTML = "";
-
-  for (let day = 1; day <= 75; day++) {
-    // Week separator
-    if ((day - 1) % 7 === 0) {
-      const weekRow = document.createElement("tr");
-      weekRow.className = "week-row";
-      const td = document.createElement("td");
-      td.colSpan = 6;
-      td.innerHTML = `<span class="week-label">— WEEK ${Math.ceil(day / 7)} —</span>`;
-      weekRow.appendChild(td);
-      tbody.appendChild(weekRow);
+// BUILD TRACKER
+function buildTracker(){
+  const tb=document.getElementById('tbody');
+  let html='';
+  for(let day=1;day<=75;day++){
+    if((day-1)%7===0){
+      html+=`<tr class="wk"><td colspan="7" style="padding:10px 0 2px 14px;font-size:9px;font-family:monospace;letter-spacing:3px;color:#ff6b35;opacity:.6;text-transform:uppercase;border:none">── WEEK ${Math.ceil(day/7)} ──</td></tr>`;
     }
-
-    const count = getDoneCount(day);
-    const all = count === 4;
-    const rowData = appData[`d${day}`] || {};
-
-    const tr = document.createElement("tr");
-    tr.className = "day-row";
-    tr.style.background = all ? "rgba(6,214,160,0.04)" : "transparent";
-
-    // Day cell
-    const dayTd = document.createElement("td");
-    const dayColor = all ? "#06d6a0" : count > 0 ? "#f0f0f8" : "#555570";
-    dayTd.innerHTML = `<div class="day-num" style="color:${dayColor}">D${String(day).padStart(2,"0")}</div><div class="day-date">${getDayDate(day)}</div>`;
-    tr.appendChild(dayTd);
-
-    // Habit boxes
-    HABITS.forEach(h => {
-      const td = document.createElement("td");
-      const checked = rowData[h.key] || false;
-      const box = document.createElement("div");
-      box.className = "habit-box";
-      box.style.border = `2px solid ${checked ? h.color : "#2a2a3a"}`;
-      box.style.background = checked ? `${h.color}25` : "transparent";
-      box.style.color = h.color;
-      box.style.boxShadow = checked ? `0 0 8px ${h.color}44` : "none";
-      box.textContent = checked ? "✓" : "";
-      box.addEventListener("click", () => toggleHabit(day, h.key, box, h, tr));
-      td.appendChild(box);
-      tr.appendChild(td);
+    const s=score(day);
+    const all=s===HABITS.length;
+    const dc=all?'#06d6a0':s>0?'#f0f0f8':'#444460';
+    html+=`<tr class="drow${all?' all':''}" id="row_${day}">
+      <td style="padding:7px 8px 7px 14px">
+        <div class="dnum" id="dn_${day}" style="color:${dc}">D${String(day).padStart(2,'0')}</div>
+        <div class="ddate">${getDate(day)}</div>
+      </td>`;
+    HABITS.forEach(h=>{
+      const on=D[`h_${day}_${h.key}`];
+      html+=`<td style="padding:5px 4px;text-align:center">
+        <div class="chk" id="chk_${day}_${h.key}" onclick="tickH(${day},'${h.key}')"
+          style="border-color:${on?h.color:'#1e1e2e'};background:${on?h.color+'22':'transparent'};color:${h.color};box-shadow:${on?`0 0 8px ${h.color}44`:'none'}">
+          ${on?'✓':''}
+        </div>
+      </td>`;
     });
-
-    // Fire cell
-    const fireTd = document.createElement("td");
-    fireTd.className = "fire-cell";
-    fireTd.style.opacity = all ? "1" : "0.12";
-    fireTd.textContent = all ? "🔥" : "○";
-    fireTd.id = `fire-${day}`;
-    tr.appendChild(fireTd);
-
-    tbody.appendChild(tr);
+    html+=`<td style="text-align:center;font-size:17px;opacity:${all?1:.1}" id="fire_${day}">${all?'🔥':'○'}</td></tr>`;
   }
+  tb.innerHTML=html;
 }
 
-function toggleHabit(day, habitKey, box, habit, tr) {
-  const k = `d${day}`;
-  if (!appData[k]) appData[k] = {};
-  appData[k][habitKey] = !appData[k][habitKey];
-  saveData();
-
-  const checked = appData[k][habitKey];
-  box.style.border = `2px solid ${checked ? habit.color : "#2a2a3a"}`;
-  box.style.background = checked ? `${habit.color}25` : "transparent";
-  box.style.boxShadow = checked ? `0 0 8px ${habit.color}44` : "none";
-  box.textContent = checked ? "✓" : "";
-
-  // Update row & fire
-  const count = getDoneCount(day);
-  const all = count === 4;
-  tr.style.background = all ? "rgba(6,214,160,0.04)" : "transparent";
-  const dayNum = tr.querySelector(".day-num");
-  dayNum.style.color = all ? "#06d6a0" : count > 0 ? "#f0f0f8" : "#555570";
-  const fire = document.getElementById(`fire-${day}`);
-  if (fire) { fire.style.opacity = all ? "1" : "0.12"; fire.textContent = all ? "🔥" : "○"; }
-
+function tickH(day,habit){
+  const k=`h_${day}_${habit}`;
+  D[k]=!D[k];
+  persist();
+  const h=HABITS.find(x=>x.key===habit);
+  const el=document.getElementById(`chk_${day}_${habit}`);
+  const on=D[k];
+  el.style.borderColor=on?h.color:'#1e1e2e';
+  el.style.background=on?h.color+'22':'transparent';
+  el.style.boxShadow=on?`0 0 8px ${h.color}44`:'none';
+  el.textContent=on?'✓':'';
+  el.classList.add('pop');
+  setTimeout(()=>el.classList.remove('pop'),200);
+  const s=score(day);
+  const all=s===HABITS.length;
+  const dc=all?'#06d6a0':s>0?'#f0f0f8':'#444460';
+  document.getElementById(`dn_${day}`).style.color=dc;
+  const row=document.getElementById(`row_${day}`);
+  row.className=`drow${all?' all':''}`;
+  const fire=document.getElementById(`fire_${day}`);
+  fire.style.opacity=all?1:.1;
+  fire.textContent=all?'🔥':'○';
   updateRing();
 }
 
-// ---- Study ----
-function renderStudy() {
-  const grid = document.getElementById("study-grid");
-  grid.innerHTML = "";
-
-  STUDY_DATA.forEach((card, ci) => {
-    const cardEl = document.createElement("div");
-    cardEl.className = "study-card";
-
-    const header = `
-      <div class="study-card-header">
-        <div class="study-card-icon" style="background:${card.color}22">${card.icon}</div>
-        <div>
-          <div class="study-card-title" style="color:${card.color}">${card.title}</div>
-          <div class="study-card-sub">${card.sub}</div>
-        </div>
+// BUILD STUDY
+function buildStudy(){
+  const grid=document.getElementById('studyGrid');
+  let html='';
+  STUDY_DATA.forEach((card,ci)=>{
+    let tasks=card.tasks.map((t,ti)=>{
+      const on=D[`s_${ci}_${ti}`];
+      return `<div class="task" onclick="tickS('s',${ci},${ti})">
+        <div class="tbox${on?' on':''}" id="sb_${ci}_${ti}">${on?'✓':''}</div>
+        <span class="ttxt${on?' on':''}" id="st_${ci}_${ti}">${t.t}</span>
+        <span class="ttime">${t.time}</span>
       </div>`;
-
-    const taskList = document.createElement("div");
-    taskList.className = "task-list";
-
-    card.tasks.forEach((task, ti) => {
-      const done = appData[`s${ci}_${ti}`] || false;
-      const item = document.createElement("div");
-      item.className = "task-item";
-
-      const check = document.createElement("div");
-      check.className = `task-check${done ? " done" : ""}`;
-      check.textContent = done ? "✓" : "";
-
-      const text = document.createElement("span");
-      text.className = `task-text${done ? " done" : ""}`;
-      text.textContent = task.t;
-
-      const time = document.createElement("span");
-      time.className = "task-time";
-      time.textContent = task.time;
-
-      item.appendChild(check);
-      item.appendChild(text);
-      item.appendChild(time);
-
-      item.addEventListener("click", () => {
-        const k = `s${ci}_${ti}`;
-        appData[k] = !appData[k];
-        saveData();
-        const isDone = appData[k];
-        check.className = `task-check${isDone ? " done" : ""}`;
-        check.textContent = isDone ? "✓" : "";
-        text.className = `task-text${isDone ? " done" : ""}`;
-      });
-
-      taskList.appendChild(item);
-    });
-
-    cardEl.innerHTML = header;
-    cardEl.appendChild(taskList);
-    grid.appendChild(cardEl);
+    }).join('');
+    html+=`<div class="card">
+      <div class="card-head">
+        <div class="cicon" style="background:${card.bg}">${card.icon}</div>
+        <div><div class="ctitle" style="color:${card.color}">${card.title}</div><div class="csub">${card.sub}</div></div>
+      </div>${tasks}</div>`;
   });
+  grid.innerHTML=html;
 }
 
-// ---- Stats ----
-function renderStats() {
-  const perfect = getPerfectDays();
-  const streak = getStreak();
-  const pct = Math.round((perfect / 75) * 100);
-  const total = getTotalChecks();
-
-  const statsData = [
-    { num: perfect, label: "Perfect Days" },
-    { num: streak, label: "Streak 🔥" },
-    { num: `${pct}%`, label: "Complete" },
-    { num: 75 - perfect, label: "Remaining" },
-    { num: total, label: "Total ✓" },
-    { num: 75, label: "Total Days" },
-  ];
-
-  const grid = document.getElementById("stats-grid");
-  grid.innerHTML = "";
-  statsData.forEach(s => {
-    const card = document.createElement("div");
-    card.className = "stat-card";
-    card.innerHTML = `<div class="stat-num">${s.num}</div><div class="stat-label">${s.label}</div>`;
-    grid.appendChild(card);
+// BUILD ENGLISH COACHING
+function buildEnglish(){
+  // Coaching cards
+  const cg=document.getElementById('engCoachGrid');
+  let html='';
+  ENG_COACHING.forEach((card,ci)=>{
+    let tasks=card.tasks.map((t,ti)=>{
+      const on=D[`ec_${ci}_${ti}`];
+      return `<div class="task" onclick="tickS('ec',${ci},${ti})">
+        <div class="tbox${on?' on':''}" id="ecb_${ci}_${ti}">${on?'✓':''}</div>
+        <span class="ttxt${on?' on':''}" id="ect_${ci}_${ti}">${t.t}</span>
+        <span class="ttime">${t.time}</span>
+      </div>`;
+    }).join('');
+    html+=`<div class="card">
+      <div class="card-head">
+        <div class="cicon" style="background:${card.bg}">${card.icon}</div>
+        <div><div class="ctitle" style="color:${card.color}">${card.title}</div><div class="csub">${card.sub}</div></div>
+      </div>${tasks}</div>`;
   });
+  cg.innerHTML=html;
+
+  // Activities
+  const ag=document.getElementById('engActGrid');
+  let ahtml='';
+  ENG_ACTIVITIES.forEach((act,ai)=>{
+    const on=D[`ea_${ai}`];
+    ahtml+=`<div class="eng-card">
+      <div class="eng-badge">${act.badge}</div>
+      <div class="act-item" onclick="tickAct(${ai})" style="border:1px solid ${on?act.color+'44':'transparent'}">
+        <div style="width:34px;height:34px;border-radius:9px;background:${act.color}18;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${act.icon}</div>
+        <div class="act-left">
+          <div class="act-title" style="color:${act.color}">${act.title}</div>
+          <div class="act-desc">${act.desc}</div>
+          <span class="act-dur">${act.dur}</span>
+        </div>
+        <div style="width:24px;height:24px;border-radius:6px;flex-shrink:0;border:2px solid ${on?act.color:'#1e1e2e'};background:${on?act.color:'transparent'};display:flex;align-items:center;justify-content:center;font-size:12px;color:#000;font-weight:800;margin-left:8px" id="ea_${ai}">${on?'✓':''}</div>
+      </div>
+    </div>`;
+  });
+  ag.innerHTML=ahtml;
+}
+
+function tickAct(ai){
+  const k=`ea_${ai}`;
+  D[k]=!D[k];
+  persist();
+  const on=D[k];
+  const act=ENG_ACTIVITIES[ai];
+  const el=document.getElementById(`ea_${ai}`);
+  el.style.borderColor=on?act.color:'#1e1e2e';
+  el.style.background=on?act.color:'transparent';
+  el.textContent=on?'✓':'';
+}
+
+function tickS(prefix,ci,ti){
+  const k=`${prefix}_${ci}_${ti}`;
+  D[k]=!D[k];
+  persist();
+  const on=D[k];
+  const b=document.getElementById(`${prefix}b_${ci}_${ti}`);
+  const t=document.getElementById(`${prefix}t_${ci}_${ti}`);
+  if(b){b.className=`tbox${on?' on':''}`;b.textContent=on?'✓':'';}
+  if(t){t.className=`ttxt${on?' on':''}`;}
+}
+
+// BUILD STATS
+function buildStats(){
+  let perfect=0,streak=0,total=0;
+  const habitCounts={};
+  HABITS.forEach(h=>habitCounts[h.key]=0);
+
+  for(let d=1;d<=75;d++){
+    const s=score(d);
+    total+=s;
+    if(isAll(d)) perfect++;
+    HABITS.forEach(h=>{if(D[`h_${d}_${h.key}`]) habitCounts[h.key]++;});
+  }
+  for(let d=75;d>=1;d--){if(isAll(d)) streak++; else break;}
+  const pct=Math.round(perfect/75*100);
+
+  // Top stats
+  document.getElementById('statTop').innerHTML=[
+    {n:perfect,l:'Perfect Days',c:'#ff6b35'},
+    {n:streak+'🔥',l:'Current Streak',c:'#ffd166'},
+    {n:pct+'%',l:'Complete',c:'#06d6a0'},
+    {n:75-perfect,l:'Remaining',c:'#ef476f'},
+    {n:total,l:'Total ✓',c:'#4cc9f0'},
+    {n:Math.round(total/(75*HABITS.length)*100)+'%',l:'Habit Rate',c:'#c77dff'},
+  ].map(s=>`<div class="sbox" style="--c:${s.c}"><div class="sn">${s.n}</div><div class="sl">${s.l}</div></div>`).join('');
+
+  // Habit bars
+  let barsHtml='';
+  HABITS.forEach(h=>{
+    const p=Math.round(habitCounts[h.key]/75*100);
+    barsHtml+=`<div class="hbar-row">
+      <div class="hbar-label">
+        <span class="hbar-name">${h.emoji} ${h.label}</span>
+        <span class="hbar-pct">${habitCounts[h.key]}/75 (${p}%)</span>
+      </div>
+      <div class="hbar-bg"><div class="hbar-fill" style="width:${p}%;background:${h.color}"></div></div>
+    </div>`;
+  });
+  document.getElementById('habitBars').innerHTML=barsHtml;
+
+  // Weekly breakdown
+  let whtml='';
+  for(let w=1;w<=11;w++){
+    const start=(w-1)*7+1;
+    const end=Math.min(w*7,75);
+    let wPerfect=0,wTotal=0;
+    for(let d=start;d<=end;d++){
+      if(isAll(d)) wPerfect++;
+      wTotal+=score(d);
+    }
+    const days=end-start+1;
+    const wpct=Math.round(wPerfect/days*100);
+    whtml+=`<div class="wbox">
+      <div class="wbox-num">${wPerfect}/${days}</div>
+      <div class="wbox-label">Week ${w}</div>
+      <div class="wbox-bar"><div class="wbox-bar-fill" style="width:${wpct}%"></div></div>
+    </div>`;
+  }
+  document.getElementById('weekGrid').innerHTML=whtml;
 
   // Heatmap
-  const heatmap = document.getElementById("heatmap");
-  heatmap.innerHTML = "";
-  const bgs = ["#16161f","rgba(6,214,160,0.15)","rgba(6,214,160,0.35)","rgba(6,214,160,0.55)","rgba(6,214,160,0.85)"];
-  for (let day = 1; day <= 75; day++) {
-    const score = getDoneCount(day);
-    const cell = document.createElement("div");
-    cell.className = "heatmap-cell";
-    cell.style.background = bgs[score];
-    cell.style.border = `1px solid ${score > 0 ? "rgba(6,214,160,0.3)" : "#2a2a3a"}`;
-    cell.style.color = score === 4 ? "#000" : "#555570";
-    cell.textContent = day;
-    heatmap.appendChild(cell);
+  let hhtml='';
+  for(let d=1;d<=75;d++){
+    const s=score(d);
+    const bg=['#13131f','rgba(6,214,160,.12)','rgba(6,214,160,.28)','rgba(6,214,160,.5)','rgba(6,214,160,.82)','rgba(6,214,160,.95)'][Math.min(s,5)];
+    const bc=s>0?'rgba(6,214,160,.25)':'#1e1e2e';
+    const tc=s===HABITS.length?'#000':'#444460';
+    hhtml+=`<div class="hcell" style="background:${bg};border-color:${bc};color:${tc}">${d}</div>`;
   }
+  document.getElementById('hmap').innerHTML=hhtml;
 }
 
-// ---- Init ----
-loadData();
-renderPills();
+function show(id,btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('v-'+id).classList.add('on');
+  btn.classList.add('on');
+  if(id==='stats') buildStats();
+}
+
+// INIT
+buildTracker();
+buildStudy();
+buildEnglish();
 updateRing();
-renderTracker();
-renderStudy();
 </script>
 
 </body>
