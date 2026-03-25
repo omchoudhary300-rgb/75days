@@ -1,0 +1,353 @@
+import { useState, useEffect, useCallback } from "react";
+
+const HABITS = [
+  { key: "sugar", label: "No Sugar", emoji: "🚫🍭", color: "#ff6b35" },
+  { key: "junk",  label: "No Junk",  emoji: "🚫🍟", color: "#ef476f" },
+  { key: "steps", label: "8-10K Steps", emoji: "👟",  color: "#ffd166" },
+  { key: "rise",  label: "Early Rise", emoji: "🌅",  color: "#118ab2" },
+];
+
+const STUDY_DATA = [
+  {
+    icon: "📐", color: "#4cc9f0", title: "Mathematics (311)", sub: "NIOS Class 12",
+    tasks: [
+      { t: "Relations & Functions — theory + examples", time: "40 min" },
+      { t: "Calculus — Differentiation / Integration", time: "45 min" },
+      { t: "Matrices & Determinants — numericals", time: "35 min" },
+      { t: "NIOS TMA / Prev year MCQs (15 qs)", time: "30 min" },
+    ],
+  },
+  {
+    icon: "⚡", color: "#06d6a0", title: "Physics (312)", sub: "NIOS Class 12",
+    tasks: [
+      { t: "Electrostatics / Current Electricity — read", time: "40 min" },
+      { t: "Formulas list banao & yaad karo", time: "20 min" },
+      { t: "Numerical practice (10 qs)", time: "35 min" },
+      { t: "Ray Optics / Wave Optics — diagrams", time: "20 min" },
+    ],
+  },
+  {
+    icon: "🧪", color: "#c77dff", title: "Chemistry (313)", sub: "NIOS Class 12",
+    tasks: [
+      { t: "Solid State / Solutions / Electrochemistry", time: "35 min" },
+      { t: "Organic Chemistry — reactions & mechanisms", time: "40 min" },
+      { t: "Chemical equations balance practice", time: "20 min" },
+      { t: "NIOS sample paper MCQs (10 qs)", time: "20 min" },
+    ],
+  },
+  {
+    icon: "✍️", color: "#ff6b35", title: "English (302)", sub: "NIOS Class 12",
+    tasks: [
+      { t: "Reading Comprehension passage (1)", time: "20 min" },
+      { t: "Letter / Essay / Notice writing practice", time: "25 min" },
+      { t: "Grammar — tenses, voice, narration", time: "20 min" },
+      { t: "10 new vocabulary / idioms", time: "15 min" },
+    ],
+  },
+  {
+    icon: "📋", color: "#ffd166", title: "NIOS TMA Work", sub: "Submit karna hai!",
+    tasks: [
+      { t: "TMA question solve karo (1-2 qs)", time: "45 min" },
+      { t: "NIOS SLM — 1 lesson read karo", time: "30 min" },
+      { t: "On Demand Exam practice paper", time: "40 min" },
+    ],
+  },
+  {
+    icon: "🔁", color: "#f72585", title: "Daily Revision", sub: "Sab subjects thoda thoda",
+    tasks: [
+      { t: "Morning — PCM formulas & key points revise", time: "20 min" },
+      { t: "Flashcards — Chemistry reactions / Maths", time: "15 min" },
+      { t: "Weekly mock test (1 full subject paper)", time: "90 min" },
+    ],
+  },
+];
+
+function getDayDate(dayNum) {
+  const d = new Date(2025, 2, 25);
+  d.setDate(d.getDate() + dayNum - 1);
+  return d.toLocaleDateString("en-IN", { day: "2-digit", month: "short" });
+}
+
+export default function App() {
+  const [tab, setTab] = useState("tracker");
+  const [data, setData] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    async function loadAll() {
+      try {
+        const result = await window.storage.get("habits");
+        if (result && result.value) {
+          setData(JSON.parse(result.value));
+        }
+      } catch (e) {}
+      setLoaded(true);
+    }
+    loadAll();
+  }, []);
+
+  const persist = useCallback(async (newData) => {
+    setSaving(true);
+    try {
+      await window.storage.set("habits", JSON.stringify(newData));
+    } catch (e) {}
+    setTimeout(() => setSaving(false), 600);
+  }, []);
+
+  function toggleHabit(day, habit) {
+    setData(prev => {
+      const k = `d${day}`;
+      const updated = { ...prev, [k]: { ...(prev[k] || {}), [habit]: !(prev[k] || {})[habit] } };
+      persist(updated);
+      return updated;
+    });
+  }
+
+  function toggleStudy(ci, ti) {
+    setData(prev => {
+      const k = `s${ci}_${ti}`;
+      const updated = { ...prev, [k]: !prev[k] };
+      persist(updated);
+      return updated;
+    });
+  }
+
+  function getDoneCount(day) {
+    const row = data[`d${day}`] || {};
+    return HABITS.filter(h => row[h.key]).length;
+  }
+
+  function isAllDone(day) { return getDoneCount(day) === 4; }
+
+  const perfectDays = Array.from({ length: 75 }, (_, i) => i + 1).filter(isAllDone).length;
+  const pct = Math.round((perfectDays / 75) * 100);
+
+  let streak = 0;
+  for (let d = 75; d >= 1; d--) {
+    if (isAllDone(d)) streak++; else break;
+  }
+
+  if (!loaded) {
+    return (
+      <div style={{ background: "#0a0a0f", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: "#ffd166", fontFamily: "serif", fontSize: 24, fontWeight: 700 }}>
+        Loading... 🔥
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ fontFamily: "sans-serif", background: "#0a0a0f", minHeight: "100vh", color: "#f0f0f8" }}>
+
+      {/* HEADER */}
+      <div style={{ background: "linear-gradient(135deg,#0a0a0f,#1a0a1f,#0a0a0f)", borderBottom: "1px solid #2a2a3a", padding: "18px 16px 14px", position: "sticky", top: 0, zIndex: 100 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+          <div>
+            <div style={{ fontSize: 36, fontWeight: 900, letterSpacing: 2, background: "linear-gradient(135deg,#ff6b35,#ffd166)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", lineHeight: 1 }}>
+              75 DAYS 🔥
+            </div>
+            <div style={{ fontSize: 10, color: "#666680", letterSpacing: 2, textTransform: "uppercase", marginTop: 3 }}>
+              NIOS Class 12 PCM • 25 Mar – 7 Jun
+            </div>
+          </div>
+          <div style={{ textAlign: "center" }}>
+            <svg width="64" height="64" viewBox="0 0 64 64" style={{ transform: "rotate(-90deg)" }}>
+              <circle cx="32" cy="32" r="26" fill="none" stroke="#2a2a3a" strokeWidth="5" />
+              <circle cx="32" cy="32" r="26" fill="none" stroke="url(#g1)" strokeWidth="5"
+                strokeLinecap="round"
+                strokeDasharray={163.4}
+                strokeDashoffset={163.4 - (163.4 * pct / 100)} />
+              <defs>
+                <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#ff6b35" />
+                  <stop offset="100%" stopColor="#ffd166" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div style={{ marginTop: -50, fontSize: 20, fontWeight: 900, color: "#ffd166", lineHeight: 1 }}>{perfectDays}</div>
+            <div style={{ fontSize: 8, color: "#666680", letterSpacing: 1, textTransform: "uppercase", marginTop: 28 }}>DONE</div>
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 7, flexWrap: "wrap" }}>
+          {HABITS.map(h => (
+            <div key={h.key} style={{ display: "flex", alignItems: "center", gap: 5, background: "#16161f", border: "1px solid #2a2a3a", borderRadius: 20, padding: "4px 10px", fontSize: 11 }}>
+              <div style={{ width: 6, height: 6, borderRadius: "50%", background: h.color }} />
+              {h.emoji} {h.label}
+            </div>
+          ))}
+          {saving && (
+            <div style={{ display: "flex", alignItems: "center", gap: 5, background: "rgba(6,214,160,0.1)", border: "1px solid rgba(6,214,160,0.3)", borderRadius: 20, padding: "4px 10px", fontSize: 11, color: "#06d6a0" }}>
+              💾 Saving...
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* TABS */}
+      <div style={{ display: "flex", gap: 4, padding: "10px 16px 0", borderBottom: "1px solid #2a2a3a", background: "#0a0a0f", position: "sticky", top: 132, zIndex: 99 }}>
+        {[["tracker","📋 Tracker"],["study","📚 Study"],["stats","📊 Stats"]].map(([id, label]) => (
+          <button key={id} onClick={() => setTab(id)} style={{
+            fontFamily: "monospace", fontSize: 11, letterSpacing: 1, textTransform: "uppercase",
+            padding: "8px 14px", borderRadius: "8px 8px 0 0", cursor: "pointer", whiteSpace: "nowrap",
+            border: tab === id ? "1px solid #2a2a3a" : "1px solid transparent",
+            borderBottom: tab === id ? "1px solid #111118" : "none",
+            background: tab === id ? "#111118" : "transparent",
+            color: tab === id ? "#f0f0f8" : "#666680",
+            marginBottom: tab === id ? -1 : 0,
+          }}>{label}</button>
+        ))}
+      </div>
+
+      {/* ===== TRACKER ===== */}
+      {tab === "tracker" && (
+        <div style={{ padding: "12px 8px", overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: 0, minWidth: 480 }}>
+            <thead>
+              <tr>
+                <th style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 2, color: "#666680", padding: "8px 8px 8px 12px", textAlign: "left", background: "#111118", borderBottom: "1px solid #2a2a3a" }}>DAY</th>
+                {HABITS.map(h => (
+                  <th key={h.key} style={{ fontFamily: "monospace", fontSize: 9, color: "#666680", padding: "8px 6px", textAlign: "center", background: "#111118", borderBottom: "1px solid #2a2a3a" }}>
+                    <div>{h.emoji}</div>
+                    <div style={{ fontSize: 8, marginTop: 2 }}>{h.label}</div>
+                  </th>
+                ))}
+                <th style={{ fontFamily: "monospace", fontSize: 9, color: "#666680", padding: "8px 6px", textAlign: "center", background: "#111118", borderBottom: "1px solid #2a2a3a" }}>ALL</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: 75 }, (_, i) => i + 1).map(day => {
+                const count = getDoneCount(day);
+                const all = count === 4;
+                const rowData = data[`d${day}`] || {};
+                const showWeek = (day - 1) % 7 === 0;
+                return (
+                  <React.Fragment key={day}>
+                    {showWeek && (
+                      <tr>
+                        <td colSpan={6} style={{ padding: "10px 0 2px 12px", borderBottom: "none" }}>
+                          <span style={{ fontFamily: "monospace", fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: "#ff6b35", opacity: 0.7 }}>
+                            — WEEK {Math.ceil(day / 7)} —
+                          </span>
+                        </td>
+                      </tr>
+                    )}
+                    <tr style={{ background: all ? "rgba(6,214,160,0.04)" : "transparent" }}>
+                      <td style={{ padding: "6px 8px 6px 12px", borderBottom: "1px solid rgba(42,42,58,0.4)" }}>
+                        <div style={{ fontSize: 17, fontWeight: 800, color: all ? "#06d6a0" : count > 0 ? "#f0f0f8" : "#555570", lineHeight: 1 }}>D{String(day).padStart(2, "0")}</div>
+                        <div style={{ fontSize: 9, color: "#444460", fontFamily: "monospace" }}>{getDayDate(day)}</div>
+                      </td>
+                      {HABITS.map(h => {
+                        const checked = rowData[h.key] || false;
+                        return (
+                          <td key={h.key} style={{ textAlign: "center", borderBottom: "1px solid rgba(42,42,58,0.4)", padding: "6px 4px" }}>
+                            <div onClick={() => toggleHabit(day, h.key)} style={{
+                              width: 32, height: 32, borderRadius: 8, margin: "auto", cursor: "pointer",
+                              border: `2px solid ${checked ? h.color : "#2a2a3a"}`,
+                              background: checked ? `${h.color}25` : "transparent",
+                              display: "flex", alignItems: "center", justifyContent: "center",
+                              fontSize: 15, fontWeight: 700, color: h.color,
+                              boxShadow: checked ? `0 0 8px ${h.color}44` : "none",
+                              transition: "all 0.15s",
+                            }}>
+                              {checked ? "✓" : ""}
+                            </div>
+                          </td>
+                        );
+                      })}
+                      <td style={{ textAlign: "center", borderBottom: "1px solid rgba(42,42,58,0.4)", fontSize: 18, opacity: all ? 1 : 0.12 }}>
+                        {all ? "🔥" : "○"}
+                      </td>
+                    </tr>
+                  </React.Fragment>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* ===== STUDY ===== */}
+      {tab === "study" && (
+        <div style={{ padding: 14 }}>
+          <div style={{ background: "rgba(255,107,53,0.1)", border: "1px solid rgba(255,107,53,0.3)", borderRadius: 12, padding: "12px 14px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ fontSize: 24 }}>🧠</span>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: 14, color: "#ffd166", letterSpacing: 1 }}>NIOS BOARD — PCM WARRIOR!</div>
+              <div style={{ fontSize: 11, color: "#666680", marginTop: 2 }}>Tick karo, aage badho — ek din ek kaam</div>
+            </div>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(270px, 1fr))", gap: 12 }}>
+            {STUDY_DATA.map((card, ci) => (
+              <div key={ci} style={{ background: "#16161f", border: "1px solid #2a2a3a", borderRadius: 14, padding: 14 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+                  <div style={{ width: 32, height: 32, borderRadius: 8, background: `${card.color}22`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 17 }}>{card.icon}</div>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: card.color }}>{card.title}</div>
+                    <div style={{ fontSize: 10, color: "#666680" }}>{card.sub}</div>
+                  </div>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  {card.tasks.map((task, ti) => {
+                    const done = data[`s${ci}_${ti}`] || false;
+                    return (
+                      <div key={ti} onClick={() => toggleStudy(ci, ti)} style={{
+                        display: "flex", alignItems: "center", gap: 8, padding: "8px 10px",
+                        background: "#111118", borderRadius: 8, cursor: "pointer",
+                      }}>
+                        <div style={{
+                          width: 20, height: 20, borderRadius: 5, flexShrink: 0,
+                          border: `2px solid ${done ? "#06d6a0" : "#2a2a3a"}`,
+                          background: done ? "#06d6a0" : "transparent",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          fontSize: 11, color: "#000", fontWeight: 700,
+                        }}>{done ? "✓" : ""}</div>
+                        <span style={{ fontSize: 12, fontWeight: 500, flex: 1, textDecoration: done ? "line-through" : "none", color: done ? "#555570" : "#f0f0f8" }}>{task.t}</span>
+                        <span style={{ fontSize: 10, color: "#444460", fontFamily: "monospace", whiteSpace: "nowrap" }}>{task.time}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ===== STATS ===== */}
+      {tab === "stats" && (
+        <div style={{ padding: 14 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, marginBottom: 20 }}>
+            {[
+              { num: perfectDays, label: "Perfect Days" },
+              { num: streak, label: "Streak 🔥" },
+              { num: `${pct}%`, label: "Complete" },
+              { num: 75 - perfectDays, label: "Remaining" },
+              { num: Array.from({ length: 75 }, (_, i) => getDoneCount(i + 1)).reduce((a, b) => a + b, 0), label: "Total ✓" },
+              { num: 75, label: "Total Days" },
+            ].map((s, i) => (
+              <div key={i} style={{ background: "#16161f", border: "1px solid #2a2a3a", borderRadius: 14, padding: "14px 10px", textAlign: "center" }}>
+                <div style={{ fontSize: 32, fontWeight: 900, background: "linear-gradient(135deg,#ff6b35,#ffd166)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", lineHeight: 1 }}>{s.num}</div>
+                <div style={{ fontSize: 9, color: "#666680", letterSpacing: 1, textTransform: "uppercase", fontFamily: "monospace", marginTop: 4 }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ fontWeight: 700, fontSize: 16, color: "#666680", letterSpacing: 2, marginBottom: 12 }}>75-DAY HEATMAP</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(15, 1fr)", gap: 4 }}>
+            {Array.from({ length: 75 }, (_, i) => i + 1).map(day => {
+              const score = getDoneCount(day);
+              const bg = ["#16161f","rgba(6,214,160,0.15)","rgba(6,214,160,0.35)","rgba(6,214,160,0.55)","rgba(6,214,160,0.85)"][score];
+              return (
+                <div key={day} style={{
+                  aspectRatio: "1", borderRadius: 4, background: bg,
+                  border: `1px solid ${score > 0 ? "rgba(6,214,160,0.3)" : "#2a2a3a"}`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 8, color: score === 4 ? "#000" : "#555570", fontFamily: "monospace",
+                }}>{day}</div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
